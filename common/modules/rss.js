@@ -1,5 +1,6 @@
 import { getRandomInt, DOMPARSER, base32toHex } from '@/modules/util.js'
 import { settings } from '@/modules/settings.js'
+import { status } from '@/modules/networking.js'
 import { cache, caches, mediaCache } from '@/modules/cache.js'
 import { toast } from 'svelte-sonner'
 import { add } from '@/modules/torrent/torrent.js'
@@ -75,7 +76,7 @@ class RSSMediaManager {
     const res = this._getMediaForRSS(page, perPage, url, ignoreChanged)
     if (!ignoreErrors) {
       res.catch(error => {
-        if (settings.value.toasts.includes('All') || settings.value.toasts.includes('Errors')) {
+        if ((settings.value.toasts.includes('All') || settings.value.toasts.includes('Errors')) && !status.value.match(/offline/i)) {
           toast.error('Search Failed', {
             description: 'Failed to load media for home feed!\n' + error.message
           })

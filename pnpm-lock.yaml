@@ -12,7 +12,7 @@ patchedDependencies:
     hash: 92e9cb4b54ea8684b0027c29ec61d24c886b142730b548ae3199be718f58a638
     path: patches/@capacitor__local-notifications.patch
   lucide-svelte@0.455.0:
-    hash: 4cedb03efc70011ca4c3a32052994c933f83328326c2e44d162a1548202f8c13
+    hash: 0609c957d625c84712d92a612c0fe92d6b06ae161e98c32f1b6b5694e5ff66ed
     path: patches/lucide-svelte@0.455.0.patch
   rfdc:
     hash: c9f93965feee0cc9f6da8f3451b078a567c0bb98da4f0c2f8b552e51a055789b
@@ -200,7 +200,7 @@ importers:
         version: 1.1.6
       lucide-svelte:
         specifier: ^0.455.0
-        version: 0.455.0(patch_hash=4cedb03efc70011ca4c3a32052994c933f83328326c2e44d162a1548202f8c13)(svelte@4.2.12)
+        version: 0.455.0(patch_hash=0609c957d625c84712d92a612c0fe92d6b06ae161e98c32f1b6b5694e5ff66ed)(svelte@4.2.12)
       p2pt:
         specifier: github:ThaUnknown/p2pt#modernise
         version: https://codeload.github.com/ThaUnknown/p2pt/tar.gz/9ad7a56ed6ee43f5664ebad33b803702ee349316
@@ -9586,7 +9586,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  lucide-svelte@0.455.0(patch_hash=4cedb03efc70011ca4c3a32052994c933f83328326c2e44d162a1548202f8c13)(svelte@4.2.12):
+  lucide-svelte@0.455.0(patch_hash=0609c957d625c84712d92a612c0fe92d6b06ae161e98c32f1b6b5694e5ff66ed)(svelte@4.2.12):
     dependencies:
       svelte: 4.2.12
 

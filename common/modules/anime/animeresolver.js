@@ -530,7 +530,7 @@ export default new class AnimeResolver {
     titles.add(parseObj.anime_title)
     for (const title of titles) {
       const search = await anilistClient.search({ search: title, ...(media ? { id_not: media.id } : {}), ...(parseObj.anime_season ? { format_not: ['OVA', ...((Number(parseObj.anime_season) > 1) ? ['MOVIE'] : [])] } : { }) })
-      if (search.data.Page.media) {
+      if (search?.data?.Page?.media) {
         for (const searchMedia of search.data.Page.media) {
           if (this.isVerified(searchMedia, {...parseObj, anime_title: title}, titleKeys, threshold)) {
             debug(`Found media from manual search for ${parseObj.anime_title}:${parseObj.anime_season}:${parseObj.episode_number}: ${searchMedia?.id}:${searchMedia?.title?.userPreferred} while ignoring the original compound ${media?.id}:${media?.title?.userPreferred}, this is likely correct...`)
