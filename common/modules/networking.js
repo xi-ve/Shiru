@@ -67,7 +67,7 @@ export const isAnilistDown = newOutageChecker({
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify({ query: '{ SiteStatistics { users { count } } }' })
+      body: JSON.stringify({ query: `query { Page(page: 1, perPage: 1) { media { id } }}` })
     },
     timeout,
     validate: async (res) => {

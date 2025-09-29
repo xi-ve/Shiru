@@ -78,16 +78,36 @@
   import ViewTrailer from '@/views/ViewAnime/ViewTrailer.svelte'
   import TorrentModal from '@/views/TorrentSearch/TorrentModal.svelte'
   import Menubar from '@/components/Menubar.svelte'
-  import { Toaster } from 'svelte-sonner'
   import UpdateModal from '@/views/Updater/UpdateModal.svelte'
   import Profiles from '@/components/Profiles.svelte'
   import Notifications from '@/components/Notifications.svelte'
   import MinimizeTray from '@/components/MinimizeTray.svelte'
   import Navbar from '@/components/Navbar.svelte'
   import Status from '@/components/Status.svelte'
+  import { status } from '@/modules/networking.js'
+  import { Toaster } from 'svelte-sonner'
+  import { onDestroy } from 'svelte'
 
   setContext('view', view)
   IPC.emit('main-ready')
+
+  let currentStatus = status.value
+  $: statusTransition = false
+  let transitionTimer
+  const unsubscribeMonitor = status.subscribe(value => {
+    if (value !== currentStatus) {
+      clearTimeout(transitionTimer)
+      statusTransition = true
+      transitionTimer = setTimeout(() => (statusTransition = false), 2_500)
+      transitionTimer.unref?.()
+      currentStatus = value
+    }
+  })
+
+  onDestroy(() => {
+    unsubscribeMonitor()
+    clearTimeout(transitionTimer)
+  })
 </script>
 
 <UpdateModal bind:overlay={$overlay} />
@@ -96,8 +116,8 @@
   <Menubar bind:page={$page} />
   <Sidebar bind:page={$page} bind:playPage={$playPage} />
   <Navbar bind:page={$page} bind:playPage={$playPage} />
-  <div class='overflow-hidden content-wrapper h-full'>
-    <Toaster visibleToasts={2} position='top-right' theme='dark' richColors duration={10000} closeButton toastOptions={{class: $page === 'settings' ? 'mt-70 mt-lg-0' : ''}} />
+  <div class='overflow-hidden content-wrapper h-full' class:status-transition={statusTransition}>
+    <Toaster visibleToasts={2} position='top-right' theme='dark' richColors duration={10_000} closeButton toastOptions={{class: $page === 'settings' ? 'mt-70 mt-lg-0' : ''}} />
     <ViewAnime bind:overlay={$overlay} />
     <ViewTrailer bind:overlay={$overlay} />
     <TorrentModal bind:overlay={$overlay} />
@@ -121,6 +141,8 @@
     margin-left: var(--sidebar-minimised) !important;
     width: calc(100% - var(--sidebar-minimised)) !important;
     height: calc(100% - var(--wrapper-offset, 0rem)) !important;
+  }
+  .status-transition {
     transition: height .3s ease 2s;
   }
 </style>
