@@ -117,6 +117,7 @@ export type Following = {
     id: number
     name: string
     about?: string
+    siteUrl: string
     createdAt: string
     isBlocked: boolean
     isFollowing: boolean

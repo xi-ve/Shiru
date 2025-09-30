@@ -1,10 +1,12 @@
 <script>
   import SmartImage from '@/components/visual/SmartImage.svelte'
   import Helper from '@/modules/helper.js'
+  import { toast } from 'svelte-sonner'
   import { onMount, onDestroy } from 'svelte'
-  import { since, capitalize, scaleFade } from '@/modules/util.js'
   import { writable } from 'simple-store-svelte'
-  import { hover, focus } from '@/modules/click.js'
+  import { since, capitalize, scaleFade } from '@/modules/util.js'
+  import { click, hover, focus } from '@/modules/click.js'
+  import IPC from '@/modules/ipc.js'
   import WPC from '@/modules/wpc.js'
 
   export let user = {}
@@ -15,6 +17,15 @@
   function initials(name) {
     const parts = name.split(/\s+/).filter(Boolean)
     return ((parts[0] ? parts[0][0] : '') + (parts[1] ? parts[1][0] : '')).toUpperCase()
+  }
+
+  function copyToClipboard (text) {
+    if (!text) return
+    navigator.clipboard.writeText(text)
+    toast('Copied to clipboard', {
+      description: 'Copied user URL to clipboard',
+      duration: 5000
+    })
   }
 
   let hideTimeout
@@ -67,15 +78,17 @@
             <SmartImage class='position-absolute h-full w-full cover-img opacity-55 inset-0' images={[user.bannerImage, './404_banner.png']}/>
           {/if}
           <div class='top-inner d-flex align-items-end w-full z-2'>
-            <div class='h-80 w-80 rounded-circle overflow-hidden flex-shrink-0' style='border: .4rem solid hsla(var(--gray-color-hsl), 0.15); clip-path: circle(50% at 50% 50%)'>
-              {#if avatar}
-                <SmartImage class='w-full h-full cover-img' images={[avatar, './404_square.png']} title={user.name}/>
-              {:else}
-                <div class='w-full h-full d-flex align-items-center justify-content-center font-weight-bold text-white bg-dark-light font-size-22'>{initials(user.name)}</div>
-              {/if}
-              {#if user.isBlocked}
-                <div class='position-absolute text-white font-size-12 font-weight-bold blocked-banner' style='top: 58%; left: 2%'>BLOCKED</div>
-              {/if}
+            <div class='rounded-circle' class:pointer={user.siteUrl} data-toggle='{user.siteUrl ? `tooltip` : ``}' data-placement='top-left' data-title='Share to Clipboard' tabindex='-1' use:click={() => copyToClipboard(user.siteUrl)} on:contextmenu|preventDefault={() => { if (user.siteUrl) IPC.emit('open', user.siteUrl) }}>
+              <div class='h-80 w-80 rounded-circle overflow-hidden flex-shrink-0' style='border: .4rem solid hsla(var(--gray-color-hsl), 0.15); clip-path: circle(50% at 50% 50%)'>
+                {#if avatar}
+                  <SmartImage class='w-full h-full cover-img' images={[avatar, './404_square.png']}/>
+                {:else}
+                  <div class='w-full h-full d-flex align-items-center justify-content-center font-weight-bold text-white bg-dark-light font-size-22'>{initials(user.name)}</div>
+                {/if}
+                {#if user.isBlocked}
+                  <div class='position-absolute text-white font-size-12 font-weight-bold blocked-banner' style='top: 58%; left: 2%'>BLOCKED</div>
+                {/if}
+              </div>
             </div>
             <div class='d-flex flex-column justify-content-center flex-shrink-1 mw-0'>
               <div class='font-weight-very-bold font-size-26 line-height-1 text-white text-break-word text-truncate'>{user.name}</div>

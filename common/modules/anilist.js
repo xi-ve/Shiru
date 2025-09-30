@@ -761,6 +761,7 @@ class AnilistClient {
               id,
               name,
               about,
+              siteUrl,
               createdAt,
               isBlocked,
               isFollowing,

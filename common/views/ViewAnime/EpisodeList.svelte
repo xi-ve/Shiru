@@ -27,7 +27,7 @@
     } else if (episodeEntry) {
       return { airdate: episodeEntry.episode.airedAt, text: `${since(new Date(episodeEntry.episode.airedAt))}`, delayed: false }
     } else if ((await malDubs.dubLists.value)?.incomplete?.includes(media.idMal) && (await animeSchedule.dubAiredLists.value).find(entry => entry?.id === media.id && entry?.episode?.aired === 1)) {
-      return { text: `Not Planned`, delayed: true }
+      return { text: `Not Planned`, delayed: true, notPlanned: true }
     } else if (!entry && !episodeEntry && (media.seasonYear >= new Date().getFullYear()) && await malDubs.isDubMedia(media)) {
       return { text: `In Production`, delayed: false }
     }
@@ -333,8 +333,23 @@
                         <div class='mr-5 py-5 px-10 text-dark text-nowrap rounded-top rounded-left font-weight-bold' class:lg-label={image} class:bg-danger={dubAiring.delayed} class:bg-senary={!dubAiring.delayed}>
                           Dub: {dubAiring.text}
                         </div>
-                        <div class='py-5 px-10 text-dark text-nowrap rounded-top rounded-left font-weight-bold' class:lg-label={image} class:bg-danger={!airdate && dubAiring.delayed} class:bg-septenary={!(!airdate && dubAiring.delayed)}>
-                          Sub: {airdate ? since(new Date(airdate)) : dubAiring.text}
+                        <div class='py-5 px-10 text-dark text-nowrap rounded-top rounded-left font-weight-bold bg-septenary' class:lg-label={image} class:bg-danger={!airdate && dubAiring.delayed && !dubAiring.notPlanned}>
+                          Sub:
+                          {#if airdate}
+                            {since(new Date(airdate))}
+                          {:else if !dubAiring.notPlanned}
+                            {dubAiring.text}
+                          {:else if (media.status === 'RELEASING' && episode > 1) || (media.status === 'NOT_YET_RELEASED' && !media.startDate?.month && !media?.season)}
+                            In Production
+                          {:else if (media.status === 'NOT_YET_RELEASED' && !media.startDate?.month && media?.season)}
+                            {capitalize(media.season.toLowerCase()) + ' ' + (media.seasonYear || '')}
+                          {:else if (media.status === 'NOT_YET_RELEASED' && media.startDate?.month)}
+                            {monthDay(new Date(media.startDate.year, media.startDate.month, media.startDate.day), true)}
+                          {:else if media.status === 'FINISHED'}
+                            Released
+                          {:else}
+                            Unknown
+                          {/if}
                         </div>
                       </div>
                     {:else}
