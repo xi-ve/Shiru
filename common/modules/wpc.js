@@ -2,7 +2,7 @@ const _eventListeners = new Map()
 const WPC = {
   send: (event, data) => window.dispatchEvent(new CustomEvent(event, { detail: data })),
   listen: (event, callback) => {
-    const wrapper = _event => callback(_event.detail)
+    const wrapper = _event => callback(_event?.detail)
     window.addEventListener(event, wrapper)
     _eventListeners.set(callback, wrapper)
     return wrapper

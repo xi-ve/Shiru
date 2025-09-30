@@ -2,6 +2,7 @@ import { SUPPORTS } from '@/modules/support.js'
 
 let lastTapElement = null
 let lastTapTarget = null
+let lastTapCurrent = null
 let lastHoverElement = null
 let lastInteractionMethod = 'mouse'
 
@@ -29,10 +30,12 @@ function selectionChange(e) {
 }
 
 document.addEventListener('pointercancel', (e) => {
-  lastTapElement?.(false)
-  lastTapElement = null
-  lastHoverElement?.(false)
-  lastHoverElement = null
+  if (lastTapTarget !== e.target && (!lastTapCurrent || !e.target || !lastTapCurrent.contains(e.target))) {
+    lastTapElement?.(false)
+    lastTapElement = null
+    lastHoverElement?.(false)
+    lastHoverElement = null
+  }
 })
 
 document.addEventListener('selectionchange', () => {
@@ -98,6 +101,91 @@ export function hoverExit(node, hoverUpdate = noop) {
   node.role = 'button'
   node.addEventListener('pointerleave', e => {
     hoverUpdate()
+  })
+}
+
+/**
+ * Adds focus event listeners to the specified node.
+ * @param {HTMLElement} node - The node to attach the event listeners to.
+ * @param {Function} [focusUpdate=noop] - The callback function to be executed on focus.
+ */
+export function focus(node, focusUpdate = noop) {
+  if (!node.hasAttribute('tabindex')) node.tabIndex = 0
+  node.role = 'button'
+  let focusTimeout
+  let blurTimeout
+  function clearTimeouts() {
+    clearTimeout(focusTimeout)
+    clearTimeout(blurTimeout)
+  }
+  node.addEventListener('focus', e => {
+    clearTimeouts()
+    focusTimeout = setTimeout(() => focusUpdate(true), 800)
+    focusTimeout.unref?.()
+  })
+  node.addEventListener('focusout', e => {
+    clearTimeouts()
+    blurTimeout = setTimeout(() => {
+      const focused = document.activeElement
+      if (node && focused?.offsetParent !== null && !node.contains(focused)) {
+        focusUpdate(false)
+        lastTapElement = null
+      }
+    })
+    blurTimeout.unref?.()
+  })
+}
+
+/**
+ * Adds hover event listeners to the specified node.
+ * @param {HTMLElement} node - The node to attach the event listeners to.
+ * @param {Function} [hoverUpdate=noop] - The callback function to be executed on hover.
+ */
+export function hover(node, hoverUpdate = noop) {
+  let pointerType = 'touch'
+  if (!node.hasAttribute('tabindex')) node.tabIndex = 0
+  node.role = 'button'
+  node.addEventListener('pointerenter', e => {
+    if (e.pointerType !== 'touch') {
+      if (!node.contains(e.target)) {
+        lastHoverElement?.(false)
+        lastTapElement?.(false)
+      }
+      hoverUpdate(true)
+      lastHoverElement = hoverUpdate
+      pointerType = e.pointerType
+    }
+  })
+  node.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.stopPropagation()
+      lastTapElement?.(false)
+      if (lastTapElement === hoverUpdate) {
+        lastTapElement = null
+      } else {
+        hoverUpdate(true, true)
+        if (!SUPPORTS.isAndroid) lastTapElement = hoverUpdate
+      }
+    }
+  })
+  node.addEventListener('pointerleave', e => {
+    lastHoverElement = hoverUpdate
+    if (e.pointerType === 'mouse') hoverUpdate(false)
+  })
+  node.addEventListener('pointerup', e => {
+    if (e.pointerType === 'touch') {
+      e.stopPropagation()
+      lastHoverElement?.(false)
+      lastTapElement?.(false)
+      if (lastTapElement === hoverUpdate) {
+        hoverUpdate(false, true)
+        lastTapElement = null
+      } else {
+        hoverUpdate(true, true)
+        lastTapElement = hoverUpdate
+        lastTapCurrent = e.currentTarget
+      }
+    }
   })
 }
 

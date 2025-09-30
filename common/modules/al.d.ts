@@ -110,13 +110,38 @@ export type Media = {
 }
 
 export type Following = {
-  status: string
-  score: number
+  score?: number
+  status?: string
+  progress?: number
   user: {
     id: number
     name: string
+    about?: string
+    createdAt: string
+    isBlocked: boolean
+    isFollowing: boolean
+    isFollower: boolean
+    bannerImage?: string
+    donatorBadge?: string
+    moderatorRoles?: string[]
+    options: {
+      profileColor?: string
+    }
     avatar: {
+      large?: string
       medium: string
+    }
+    statistics: {
+      anime: {
+        count: number
+        meanScore: number
+        minutesWatched: number
+        episodesWatched: number
+        genres: {
+          genre: string
+          count: number
+        }
+      }
     }
   }
 }

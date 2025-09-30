@@ -304,6 +304,7 @@
                     {/await}
                   </div>
                 </div>
+                <Following media={staticMedia} />
               </div>
             </div>
             <Details media={staticMedia} alt={recommendations} />
@@ -329,7 +330,6 @@
                 {staticMedia.description?.replace(/<[^>]*>/g, '')?.replace(/\.\.+(?=\s*$)/gm, '.') || ''}
               </div>
             {/if}
-            <Following media={staticMedia} />
             {#if episodeList?.length}
               <div class='w-full d-flex d-lg-none flex-row align-items-center pt-20 mt-10 pointer' aria-hidden='true' use:click={() => { episodeOrder = !episodeOrder }}>
                 <hr class='w-full' />

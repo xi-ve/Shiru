@@ -1,6 +1,7 @@
 import { SUPPORTS } from '@/modules/support.js'
-import levenshtein from 'js-levenshtein'
 import { writable, derived } from 'simple-store-svelte'
+import { cubicOut } from 'svelte/easing'
+import levenshtein from 'js-levenshtein'
 import Fuse from 'fuse.js'
 
 export const codes = {
@@ -396,6 +397,15 @@ export function debounce (fn, time) {
     clearTimeout(timeout)
     timeout = setTimeout(later, time)
     timeout.unref?.()
+  }
+}
+
+export function scaleFade(node, { delay = 0, duration = 150, start = 0.95, end = 1 } = {}) {
+  return {
+    delay,
+    duration,
+    easing: cubicOut,
+    css: t => `opacity: ${t}; transform: scale(${start + (end - start) * t});`
   }
 }
 

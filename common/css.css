@@ -166,6 +166,9 @@
 .h-80 {
   height: 8rem;
 }
+.h-140 {
+  height: 14rem;
+}
 .h-270 {
   height: 27rem;
 }
@@ -178,6 +181,9 @@
 }
 .w-40 {
   width: 4rem;
+}
+.w-80 {
+  width: 8rem;
 }
 .w-90 {
   width: 9rem;
@@ -259,6 +265,9 @@
   max-width: 120rem;
 }
 
+.hm-250 {
+  max-height: 25rem;
+}
 .hm-400 {
   max-height: 40rem;
 }
@@ -282,6 +291,10 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+.top-100 {
+  top: 100%
 }
 
 .status-transition {
@@ -469,8 +482,15 @@ a[href]:active, button:not([disabled], .not-reactive):active:not([data-sonner-to
 .mb--3 {
   margin-bottom: -.3rem !important;
 }
+.mb-4 {
+  margin-bottom: .4rem !important;
+}
 .mb-30 {
   margin-bottom: 3rem;
+}
+
+.ml--1 {
+  margin-left: -1rem;
 }
 
 .mt--10 {
@@ -540,6 +560,11 @@ body {
   border-color: var(--error-color-light) !important;
 }
 
+.bg-muted {
+  border-color: var(--dm-muted-text-color) !important;
+  background-color: var(--dm-muted-text-color) !important;
+}
+
 .bg-quinary {
   border-color: var(--quinary-color) !important;
   background-color: var(--quinary-color) !important;
@@ -590,6 +615,18 @@ body {
 .transparent {
   opacity: 0;
   pointer-events: none;
+}
+
+.opacity-55 {
+  opacity: 0.55;
+}
+
+.inset-0 {
+  inset: 0;
+}
+
+.gap-5 {
+  gap: 0.5rem;
 }
 
 .btn:disabled {

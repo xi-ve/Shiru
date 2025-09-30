@@ -754,13 +754,38 @@ class AnilistClient {
       query($id: Int) {
         Page {
           mediaList(mediaId: $id, isFollowing: true, sort: UPDATED_TIME_DESC) {
+            score(format: POINT_10),
             status,
-            score,
+            progress,
             user {
               id,
               name,
+              about,
+              createdAt,
+              isBlocked,
+              isFollowing,
+              isFollower,
+              bannerImage,
+              donatorBadge,
+              moderatorRoles,
+              options {
+                profileColor
+              },
               avatar {
+                large,
                 medium
+              },
+              statistics {
+                anime {
+                  count,
+                  meanScore,
+                  minutesWatched,
+                  episodesWatched,
+                  genres(limit: 5, sort: COUNT_DESC) {
+                    genre,
+                    count
+                  }
+                }
               }
             }
           }

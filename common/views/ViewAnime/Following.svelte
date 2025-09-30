@@ -1,40 +1,40 @@
 <script>
   import { anilistClient } from '@/modules/anilist.js'
-  import { click } from '@/modules/click.js'
-  import IPC from '@/modules/ipc.js'
-  import { ExternalLink } from 'lucide-svelte'
-  import ToggleTitle from '@/views/ViewAnime/ToggleTitle.svelte'
-  import ToggleFooter from '@/views/ViewAnime/ToggleFooter.svelte'
+  import User from '@/views/ViewAnime/User.svelte'
   import Helper from '@/modules/helper.js'
 
   /** @type {import('@/modules/al.d.ts').Media} */
   export let media
   $: following = anilistClient.userID?.viewer?.data?.Viewer && anilistClient.following({ id: media.id })
-
-  let showMore = false
-  function toggleList () {
-    showMore = !showMore
-  }
 </script>
 
 {#await following then res}
   {@const following = [...new Map(res?.data?.Page?.mediaList.filter(item => !Helper.isAuthorized() || item.user.id !== Helper.getUser().id).map(item => [item.user.name, item])).values()]}
   {#if following?.length}
-    <span class='d-flex align-items-end mt-20' aria-hidden='true' tabindex='-1' class:pointer={following.length > 4} class:not-reactive={!(following.length > 4)} use:click={toggleList}>
-      <ToggleTitle title={'Following'} class={following.length > 4 ? `more` : ``}/>
-    </span>
-    <div class='px-15 pt-5 flex-column'>
-      {#each following.slice(0, showMore ? 100 : 4) as friend}
-        <div class='d-flex align-items-center w-full pt-20 font-size-16'>
-          <img src={friend.user.avatar.medium} alt='avatar' class='w-50 h-50 img-fluid rounded cover-img' />
-          <span class='my-0 pl-20 mr-auto text-truncate'>{friend.user.name}</span>
-          <span class='my-0 px-10 text-capitalize'>{friend.status.toLowerCase()}</span>
-          <span class='pointer text-primary d-flex align-items-center' use:click={() => IPC.emit('open', 'https://anilist.co/user/' + friend.user.name)}>
-            <ExternalLink size='1.8rem' />
-          </span>
+    <div class='position-relative mt-10 d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start'>
+      {#each following.slice(0, 10) as user, i}
+        <div class='avatar z-5'>
+          <User user={{...user.user, score: user.score, status: user.status, progress: user.progress }} style='z-index: {i + 1}; margin-left: {i > 0 ? `-1rem` : `0`}'/>
         </div>
       {/each}
+      {#if following.length > 10}
+        <div class='bg-dark-light rounded-circle h-50 w-50 ml--1 mb-4 d-flex align-items-center justify-content-center font-size-14 font-weight-bold' style='border: .3rem solid hsla(var(--dark-color-hsl), 0.9)'>
+          +{following.length - 10}
+        </div>
+      {/if}
     </div>
-    <ToggleFooter {showMore} {toggleList} size={following.length} />
   {/if}
 {/await}
+
+<style>
+  .avatar {
+    will-change: z-index;
+    transition: z-index .05s;
+  }
+  .avatar:has(*:focus) {
+    z-index: 10 !important;
+  }
+  .avatar:hover {
+    z-index: 10 !important;
+  }
+</style>
