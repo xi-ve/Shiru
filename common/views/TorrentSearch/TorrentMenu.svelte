@@ -83,7 +83,10 @@
    */
   function sortResults(results, sort) {
     if (!results) return { results: [], hiddenResults: [] }
-    const deduped = Array.from(dedupe(results))
+    const deduped = Array.from(dedupe(results)).map(result => {
+      if (!(result.parseObject?.release_group && result.parseObject.release_group.length < 20)) result.parseObject = { ...result.parseObject, release_group: 'No Group' }
+      return result
+    })
     return {
       results: deduped.filter(entry => entry.seeders > 0).sort((a, b) => {
         switch (sort) {
