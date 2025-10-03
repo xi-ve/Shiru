@@ -1,5 +1,5 @@
 <script context='module'>
-  import {createListener, generateRandomString} from '@/modules/util.js'
+  import { createListener, generateRandomString } from '@/modules/util.js'
   import { writable } from 'simple-store-svelte'
   import { swapProfiles, alToken, malToken, profiles, sync } from '@/modules/settings.js'
   import { clientID } from '@/modules/myanimelist.js'

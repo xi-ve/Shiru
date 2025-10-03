@@ -36,7 +36,7 @@
       allow='autoplay'
       allowfullscreen
       on:load={() => { hide = false }}
-      src={`https://www.youtube.com/embed/${$trailer.id}?autoplay=1&vq=hd720&cc_lang_pref=ja`}
+      src={`https://www.youtube-nocookie.com/embed/${$trailer.id}?enablejsapi=1&autoplay=1&mute=0&cc_lang_pref=ja`}
     />
   </div>
 </SoftModal>

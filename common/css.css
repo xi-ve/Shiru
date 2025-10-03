@@ -111,7 +111,7 @@
   --episode-card-gradient: linear-gradient(180deg, hsla(var(--black-color-hsl), 0) 77.08%, hsla(var(--dark-color-light-hsl), 0.7) 100%);
   --episode-preview-card-gradient: linear-gradient(180deg, hsla(var(--black-color-hsl), 0) 0%, hsla(var(--black-color-hsl), 0) 80%, var(--dark-color-light) 100%);
   --preview-card-end-gradient: linear-gradient(180deg, hsla(var(--black-color-hsl), 0) 0%, hsla(var(--black-color-hsl), 0) 85%, hsla(var(--dark-color-light-hsl), 0.85) 95%, var(--dark-color-light) 98%);
-  --preview-card-trailer-gradient: linear-gradient(180deg, hsla(var(--black-color-hsl), 0) 0%, hsla(var(--black-color-hsl), 0) 85%, hsla(var(--dark-color-light-hsl), 0.85) 95%, var(--dark-color-light) 100%);
+  --preview-card-trailer-gradient: linear-gradient(180deg, hsla(var(--black-color-hsl), 0) 0%, hsla(var(--black-color-hsl), 0) 85%, hsla(var(--dark-color-light-hsl), 0.85) 95%, var(--dark-color-light) 98%, var(--dark-color-light) 100%);
   --section-end-gradient: linear-gradient(270deg, hsla(var(--dark-color-hsl), 1) 0%, hsla(var(--dark-color-light-hsl), 0) 100%);
 
   --theme-color: var(--dark-color) !important;
@@ -416,6 +416,10 @@ a[href]:active, button:not([disabled], .not-reactive):active:not([data-sonner-to
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+.blur-6 {
+  filter: blur(.6rem) saturate(1.5);
 }
 
 .z--1 {
