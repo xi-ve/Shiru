@@ -281,8 +281,8 @@ importers:
         specifier: ^5.1.7
         version: 5.1.7
       electron-updater:
-        specifier: ^6.2.1
-        version: 6.2.1
+        specifier: ^6.6.8
+        version: 6.6.8
       webpack-merge:
         specifier: ^6.0.1
         version: 6.0.1
@@ -1514,6 +1514,10 @@ packages:
     resolution: {integrity: sha512-upp+biKpN/XZMLim7aguUyW8s0FUpDvOtK6sbanMFDAMBzpHDqdhgVYm6zc9HJ6nWo7u2Lxk60i2M6Jd3aiNrA==}
     engines: {node: '>=12.0.0'}
 
+  builder-util-runtime@9.4.0:
+    resolution: {integrity: sha512-omkpaKbutPYqC0nwLEeGq540xND1YPhfVzwT6CFyCFzxhNDt/X+fykr17Yo3jxiuwI3zaAnY/1tKFoRN+FeHhg==}
+    engines: {node: '>=12.0.0'}
+
   builder-util@24.13.1:
     resolution: {integrity: sha512-NhbCSIntruNDTOVI9fdXz0dihaqX2YuE1D6zZMrwiErzH4ELZHE6mdiB40wEgZNprDia+FghRFgKoAqMZRRjSA==}
 
@@ -2217,8 +2221,8 @@ packages:
   electron-to-chromium@1.5.199:
     resolution: {integrity: sha512-3gl0S7zQd88kCAZRO/DnxtBKuhMO4h0EaQIN3YgZfV6+pW+5+bf2AdQeHNESCoaQqo/gjGVYEf2YM4O5HJQqpQ==}
 
-  electron-updater@6.2.1:
-    resolution: {integrity: sha512-83eKIPW14qwZqUUM6wdsIRwVKZyjmHxQ4/8G+1C6iS5PdDt7b1umYQyj1/qPpH510GmHEQe4q0kCPe3qmb3a0Q==}
+  electron-updater@6.6.8:
+    resolution: {integrity: sha512-n8FeXRc7Q7BBweS85+H5h4/uzBz8hSSOYhDnwOumpbIhYdPk9EEzWLKDyoArMyf4RebywqWBUE96QDn9TETRhQ==}
 
   electron@29.1.4:
     resolution: {integrity: sha512-IWXys0SqgmIfrqXusUGQC0gGG7CCqA5vfmNsUMj8dFkAnK3lisKyjSESStWlrsste/OX/AAC5wsVlf23reUNnw==}
@@ -7349,6 +7353,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  builder-util-runtime@9.4.0:
+    dependencies:
+      debug: 4.4.1
+      sax: 1.4.1
+    transitivePeerDependencies:
+      - supports-color
+
   builder-util@24.13.1:
     dependencies:
       7zip-bin: 5.2.0
@@ -8174,9 +8185,9 @@ snapshots:
 
   electron-to-chromium@1.5.199: {}
 
-  electron-updater@6.2.1:
+  electron-updater@6.6.8:
     dependencies:
-      builder-util-runtime: 9.2.4
+      builder-util-runtime: 9.4.0
       fs-extra: 10.1.0
       js-yaml: 4.1.0
       lazy-val: 1.0.5
