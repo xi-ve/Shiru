@@ -232,8 +232,8 @@ importers:
         specifier: ^1.0.9
         version: 1.0.9
       svelte-loader:
-        specifier: ^3.1.9
-        version: 3.1.9(svelte@4.2.20)
+        specifier: ^3.2.4
+        version: 3.2.4(svelte@4.2.20)
       svelte-persisted-store:
         specifier: ^0.12.0
         version: 0.12.0(svelte@4.2.20)
@@ -5186,10 +5186,10 @@ packages:
   svelte-keybinds@1.0.9:
     resolution: {integrity: sha512-bQt9azkXX4SgMJpJzYWQB6D0hj45+Ro2+2Awr4YNtjmuRuKdio+Rxuhky5JJyBBfyRQ7YT63nSR3whH4FACv1A==}
 
-  svelte-loader@3.1.9:
-    resolution: {integrity: sha512-RITPqze3TppOhaZF8SEFTDTwFHov17k3UkOjpxyL/No/YVrvckKmXWOEj7QEpsZZZSNQPb28tMZbHEI2xLhJMQ==}
+  svelte-loader@3.2.4:
+    resolution: {integrity: sha512-e0HdDnkYH/MDx4/IfTSka5AOFg9yYJcPuoZJB5x0l60fkHjVjNvrrxr+rJegDG9J7ZymmdHt00/hdLw+QF299w==}
     peerDependencies:
-      svelte: ^3.0.0 || ^4.0.0-next.0
+      svelte: ^3.0.0 || ^4.0.0-next.0 || ^5.0.0-next.1
 
   svelte-persisted-store@0.12.0:
     resolution: {integrity: sha512-BdBQr2SGSJ+rDWH8/aEV5GthBJDapVP0GP3fuUCA7TjYG5ctcB+O9Mj9ZC0+Jo1oJMfZUd1y9H68NFRR5MyIJA==}
@@ -11631,7 +11631,7 @@ snapshots:
 
   svelte-keybinds@1.0.9: {}
 
-  svelte-loader@3.1.9(svelte@4.2.20):
+  svelte-loader@3.2.4(svelte@4.2.20):
     dependencies:
       loader-utils: 2.0.4
       svelte: 4.2.20
