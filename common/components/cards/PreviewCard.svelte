@@ -47,7 +47,7 @@
   }
 </script>
 
-<div class='position-absolute w-350 h-full absolute-container top-0 bottom-0 m-auto bg-dark-light z-30 rounded overflow-hidden pointer' in:fadeIn out:fadeOut bind:this={element} on:scroll={(e) => e.target.scrollTop = 0}>
+<div class='position-absolute w-350 h-full absolute-container top-0 bottom-0 m-auto bg-dark-light z-30 rounded overflow-hidden pointer fade-change' in:fadeIn out:fadeOut bind:this={element} on:scroll={(e) => e.target.scrollTop = 0}>
   <div class='banner position-relative bg-black overflow-hidden' >
     <SmartImage class='img-cover w-full h-full' images={[media.bannerImage, ...(media.trailer?.id ? [`https://i.ytimg.com/vi/${media.trailer.id}/maxresdefault.jpg`, `https://i.ytimg.com/vi/${media.trailer.id}/hqdefault.jpg`] : []), media.coverImage?.extraLarge ]}/>
     {#await (media.trailer?.id && media) || episodesList.getMedia(media.idMal) then trailer}

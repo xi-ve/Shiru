@@ -71,7 +71,7 @@
     {/if}
   </button>
   {#if $showUser}
-    <div class='popover-container position-absolute top-100 left-0 mw-0 z-5 border rounded-10 overflow-hidden test-remove-later' style:--theme-base-color={user.options?.profileColor ?? `var(--dark-color)`} in:fadeIn={{ duration: 180 }} out:fadeOut={{ duration: 120 }}>
+    <div class='popover-container position-absolute top-100 left-0 mw-0 z-5 border rounded-10 overflow-hidden test-remove-later fade-change' style:--theme-base-color={user.options?.profileColor ?? `var(--dark-color)`} in:fadeIn={{ duration: 180 }} out:fadeOut={{ duration: 120 }}>
       <div class='popover-card'>
         <div class='position-relative h-140 p-5 d-flex align-items-end'>
           {#if user.bannerImage}

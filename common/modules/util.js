@@ -420,7 +420,8 @@ export function fadeIn(node, { delay = 0, duration = 300, y = 1.2, startScale = 
     css: (t, u) => `
       opacity: ${t};
       transform: translateY(${u * y}rem) scale(${startScale + (1 - startScale) * t});
-      transform-origin: bottom center;`
+      transform-origin: bottom center;
+      will-change: transform, opacity;`
   }
 }
 
@@ -444,7 +445,8 @@ export function fadeOut(node, { delay = 0, duration = 200, y = 1.2, endScale = 0
     css: (t, u) => `
         opacity: ${t};
         transform: translateY(${u * y}rem) scale(${1 + (endScale - 1) * u});
-        transform-origin: bottom center;`
+        transform-origin: bottom center;
+        will-change: transform, opacity;`
   }
 }
 
