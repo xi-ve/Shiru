@@ -86,7 +86,9 @@
     }
 
     let terms = [...new Set([...video, ...audio].map(term => termMapping[term?.toUpperCase()]).filter(t => t))]
-    if (resolution) terms.unshift({ text: resolution, color: 'var(--quaternary-color)' })
+    if (resolution) {
+      for (const res of Array.isArray(resolution) ? [...new Set(resolution)].flatMap(r => String(r).split(/[\/,|]+/).map(s => s.trim()).filter(Boolean)) : String(resolution).split(/[\/,|]+/).map(s => s.trim()).filter(Boolean)) terms.unshift({ text: res, color: 'var(--quaternary-color)' })
+    }
 
     for (const key of Object.keys(termMapping)) {
       if (fileName && (isEnglishDubbed || termMapping[key] !== termMapping.ENGLISHAUDIO) && !terms.some(existingTerm => existingTerm.text === termMapping[key].text)) {
