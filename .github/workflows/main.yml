@@ -45,7 +45,7 @@ jobs:
           cd electron
           npm run publish
 
-  release-ubuntu:
+  release-linux:
     runs-on: ubuntu-latest
 
     steps:
