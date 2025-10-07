@@ -474,7 +474,7 @@ a[href]:active, button:not([disabled], .not-reactive):active:not([data-sonner-to
   }
 }
 
-.grab{
+.grab {
   cursor: grab;
 }
 .grab:active {
@@ -488,6 +488,9 @@ a[href]:active, button:not([disabled], .not-reactive):active:not([data-sonner-to
 }
 .cursor-wait {
   cursor: wait !important;
+}
+.touch-none {
+  touch-action: none;
 }
 
 .mb--3 {

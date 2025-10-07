@@ -213,7 +213,7 @@
      role='group' bind:this={container} on:dragstart|preventDefault|self>
   <div class='resize resize-{position ? (position.match(/top/i) ? `b` : `t`) + (position.match(/left/i) ? `r` : `l`) : `tl`}' class:d-none={!resize || !active} use:resizable />
   <slot />
-  <div class='miniplayer-footer' class:dragging use:draggable tabindex='-1'>::::</div>
+  <div class='miniplayer-footer touch-none' class:dragging use:draggable tabindex='-1'>::::</div>
   <div class='h-20 w-full position-absolute'/>
 </div>
 
