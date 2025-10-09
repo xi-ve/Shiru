@@ -493,6 +493,14 @@ a[href]:active, button:not([disabled], .not-reactive):active:not([data-sonner-to
   touch-action: none;
 }
 
+.clip-0 {
+  clip-path: inset(0 0 0 0)
+}
+
+.clip-0-rounded {
+  clip-path: inset(0 0 0 0 round var(--base-border-radius))
+}
+
 .mb--3 {
   margin-bottom: -.3rem !important;
 }
