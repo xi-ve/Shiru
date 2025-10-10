@@ -171,7 +171,7 @@
   height: 14rem;
 }
 .h-165 {
-  height: 16.5rem !important
+  height: 16.5rem !important;
 }
 .h-270 {
   height: 27rem;
@@ -446,6 +446,9 @@ a[href]:active, button:not([disabled], .not-reactive):active:not([data-sonner-to
 .z-55 {
   z-index: 55;
 }
+.z-80 {
+  z-index: 80 !important;
+}
 .z-100 {
   z-index: 100;
 }
@@ -499,6 +502,12 @@ a[href]:active, button:not([disabled], .not-reactive):active:not([data-sonner-to
 
 .clip-0-rounded {
   clip-path: inset(0 0 0 0 round var(--base-border-radius))
+}
+
+.pv-trailer {
+  height: 200%;
+  top: 50%;
+  transform: translate(0, -50%);
 }
 
 .mb--3 {

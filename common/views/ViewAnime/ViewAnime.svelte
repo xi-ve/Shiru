@@ -8,13 +8,12 @@
   import { add } from '@/modules/torrent/torrent.js'
   import { toast } from 'svelte-sonner'
   import { anilistClient } from '@/modules/anilist.js'
-  import { episodesList } from '@/modules/episodes.js'
   import { click } from '@/modules/click.js'
-  import { trailer } from '@/views/ViewAnime/ViewTrailer.svelte'
   import Details from '@/views/ViewAnime/Details.svelte'
   import EpisodeList from '@/views/ViewAnime/EpisodeList.svelte'
   import ToggleList from '@/views/ViewAnime/ToggleList.svelte'
   import Scoring from '@/views/ViewAnime/Scoring.svelte'
+  import ViewTrailer from '@/views/ViewAnime/ViewTrailer.svelte'
   import SmartImage from '@/components/visual/SmartImage.svelte'
   import AudioLabel from '@/views/ViewAnime/AudioLabel.svelte'
   import Following from '@/views/ViewAnime/Following.svelte'
@@ -22,7 +21,7 @@
   import SmallCard from '@/components/cards/SmallCard.svelte'
   import SmallCardSk from '@/components/skeletons/SmallCardSk.svelte'
   import Helper from '@/modules/helper.js'
-  import { ArrowLeft, Clapperboard, TvMinimalPlay, Users, Heart, Play, Timer, TrendingUp, Tv, Hash, ArrowDown01, ArrowUp10 } from 'lucide-svelte'
+  import { ArrowLeft, Clapperboard, Users, Heart, Play, Timer, TrendingUp, Tv, Hash, ArrowDown01, ArrowUp10 } from 'lucide-svelte'
 
   export let overlay
   const view = getContext('view')
@@ -269,7 +268,7 @@
                   {/if}
                 </div>
                 <div class='d-flex flex-row flex-wrap play'>
-                  <button class='btn btn-lg btn-secondary w-250 text-dark font-weight-bold shadow-none border-0 d-flex align-items-center justify-content-center mr-10 mt-20'
+                  <button class='btn btn-lg btn-secondary w-250 text-dark font-weight-bold shadow-none border-0 d-flex align-items-center justify-content-center mr-20 mt-20'
                           use:click={() => play()}
                           disabled={staticMedia.status === 'NOT_YET_RELEASED'}>
                     <Play class='mr-10' fill='currentColor' size='1.6rem' />
@@ -277,28 +276,22 @@
                   </button>
                   <div class='mt-20 d-flex'>
                     {#if Helper.isAuthorized()}
-                      <Scoring {media} viewAnime={true} />
+                      <Scoring class='mr-10 '{media} viewAnime={true} />
                     {/if}
                     {#if Helper.isAniAuth()}
-                      <button class='btn bg-dark-light btn-lg btn-square d-flex align-items-center justify-content-center shadow-none border-0 ml-10' data-toggle='tooltip' data-placement='top' data-target-breakpoint='md' data-title={media.isFavourite ? 'Unfavourite' : 'Favourite'} use:click={toggleFavourite} disabled={!Helper.isAniAuth()}>
+                      <button class='btn bg-dark-light btn-lg btn-square d-flex align-items-center justify-content-center shadow-none border-0 mr-10' data-toggle='tooltip' data-placement='top' data-target-breakpoint='md' data-title={media.isFavourite ? 'Unfavourite' : 'Favourite'} use:click={toggleFavourite} disabled={!Helper.isAniAuth()}>
                         <div class='favourite d-flex align-items-center justify-content-center' title={media.isFavourite ? 'Unfavourite' : 'Favourite'}>
                           <Heart color={media.isFavourite ? 'var(--tertiary-color)' : 'currentColor'} fill={media.isFavourite ? 'var(--tertiary-color)' : 'transparent'} size='1.7rem' />
                         </div>
                       </button>
                     {/if}
-                    {#await (staticMedia.trailer?.id && media) || episodesList.getMedia(staticMedia.idMal) then trailerUrl}
-                      {#if trailerUrl?.trailer?.id || trailerUrl?.data?.trailer?.youtube_id }
-                        <button class='btn bg-dark-light btn-lg btn-square d-flex align-items-center justify-content-center shadow-none border-0' data-toggle='tooltip' data-placement='top' data-target-breakpoint='md' data-title='Watch Trailer' class:ml-10={Helper.isAuthorized()} use:click={() => $trailer = { media: staticMedia, id: (trailerUrl?.trailer?.id || trailerUrl?.data?.trailer?.youtube_id) }}>
-                          <TvMinimalPlay size='1.7rem' />
-                        </button>
-                      {/if}
-                      <button class='btn bg-dark-light btn-lg btn-square d-none align-items-center justify-content-center shadow-none border-0' class:d-flex={staticMedia.id} data-toggle='tooltip' data-placement='top' data-target-breakpoint='md' data-title='Share to Clipboard' class:ml-10={Helper.isAuthorized() || (trailerUrl?.trailer?.id || trailerUrl?.data?.trailer?.youtube_id)} use:click={() => copyToClipboard(`https://anilist.co/anime/${staticMedia.id}`)} on:contextmenu|preventDefault={() => IPC.emit('open', `https://anilist.co/anime/${staticMedia.id}`)}>
-                        <img class='rounded w-20' src='./anilist_icon.png' alt='Anilist'>
-                      </button>
-                      <button class='btn bg-dark-light btn-lg btn-square d-none align-items-center justify-content-center shadow-none border-0' class:d-flex={staticMedia.idMal} data-toggle='tooltip' data-placement='top' data-target-breakpoint='md' data-title='Share to Clipboard' class:ml-10={Helper.isAuthorized() || (trailerUrl?.trailer?.id || trailerUrl?.data?.trailer?.youtube_id) || staticMedia.id} use:click={() => copyToClipboard(`https://myanimelist.net/anime/${staticMedia.idMal}`)} on:contextmenu|preventDefault={() => IPC.emit('open', `https://myanimelist.net/anime/${staticMedia.idMal}`)}>
-                        <img class='rounded w-20' src='./myanimelist_icon.png' alt='MyAnimeList'>
-                      </button>
-                    {/await}
+                    <ViewTrailer bind:overlay {staticMedia}/>
+                    <button class='btn bg-dark-light btn-lg btn-square d-none align-items-center justify-content-center shadow-none border-0 mr-10' class:d-flex={staticMedia.id} data-toggle='tooltip' data-placement='top' data-target-breakpoint='md' data-title='Share to Clipboard' use:click={() => copyToClipboard(`https://anilist.co/anime/${staticMedia.id}`)} on:contextmenu|preventDefault={() => IPC.emit('open', `https://anilist.co/anime/${staticMedia.id}`)}>
+                      <img class='rounded w-20' src='./anilist_icon.png' alt='Anilist'>
+                    </button>
+                    <button class='btn bg-dark-light btn-lg btn-square d-none align-items-center justify-content-center shadow-none border-0' class:d-flex={staticMedia.idMal} data-toggle='tooltip' data-placement='top' data-target-breakpoint='md' data-title='Share to Clipboard' use:click={() => copyToClipboard(`https://myanimelist.net/anime/${staticMedia.idMal}`)} on:contextmenu|preventDefault={() => IPC.emit('open', `https://myanimelist.net/anime/${staticMedia.idMal}`)}>
+                      <img class='rounded w-20' src='./myanimelist_icon.png' alt='MyAnimeList'>
+                    </button>
                   </div>
                 </div>
                 <Following media={staticMedia} />

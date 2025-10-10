@@ -75,7 +75,6 @@
   import Sidebar from '@/components/Sidebar.svelte'
   import Router from '@/Router.svelte'
   import ViewAnime from '@/views/ViewAnime/ViewAnime.svelte'
-  import ViewTrailer from '@/views/ViewAnime/ViewTrailer.svelte'
   import TorrentModal from '@/views/TorrentSearch/TorrentModal.svelte'
   import Menubar from '@/components/Menubar.svelte'
   import UpdateModal from '@/views/Updater/UpdateModal.svelte'
@@ -119,7 +118,6 @@
   <div class='overflow-hidden content-wrapper h-full' class:status-transition={statusTransition}>
     <Toaster visibleToasts={2} position='top-right' theme='dark' richColors duration={10_000} closeButton toastOptions={{class: $page === 'settings' ? 'mt-70 mt-lg-0' : ''}} />
     <ViewAnime bind:overlay={$overlay} />
-    <ViewTrailer bind:overlay={$overlay} />
     <TorrentModal bind:overlay={$overlay} />
     <Notifications bind:overlay={$overlay} />
     <Profiles bind:overlay={$overlay} />

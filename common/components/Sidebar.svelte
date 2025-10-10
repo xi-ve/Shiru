@@ -32,7 +32,8 @@
   }
 </script>
 
-<div class='sidebar z-30 d-md-block' class:animated={$settings.expandingSidebar}>
+<div class='sidebar z-80 d-md-block' class:animated={$settings.expandingSidebar}>
+  <div class='z--1 pointer-events-none h-full bg-dark position-absolute' style='width: var(--sidebar-width)'/>
   <div class='sidebar-overlay z--1 pointer-events-none h-full position-absolute' />
   <div class='sidebar-menu h-full d-flex flex-column m-0 pb-5 animate' class:br-10={!$settings.expandingSidebar}>
     <div class='w-50 m-10 p-5 mb-0 top-0 flex-shrink-0 pointer-events-none {_status === `offline` ? `h-80` : `h-50`}' class:status-transition={statusTransition} class:d-none={SUPPORTS.isAndroid}/>
@@ -160,9 +161,6 @@
       transform: rotate(10deg);
     }
   }
-  .pt-100 {
-    padding-top: 10rem;
-  }
 
   .sidebar {
     transition: width .8s cubic-bezier(0.25, 0.8, 0.25, 1), left .8s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
@@ -173,9 +171,6 @@
   }
   .sidebar.animated:hover {
     width: 22rem
-  }
-  .sidebar.animated {
-    z-index: 60 !important;
   }
   .sidebar-overlay {
     width: var(--sidebar-width);
