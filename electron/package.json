@@ -4,7 +4,7 @@
   "license": "GPL-3.0-or-later",
   "private": true,
   "author": "RockinChaos <RockinChaos@users.noreply.github.com>",
-  "description": "BitTorrent streaming software with no paws in the way—watch anime in real-time, no waiting for downloads!",
+  "description": "Manage your personal media library, organize your collection, and stream your content in real time, no waiting required!",
   "main": "build/main.js",
   "homepage": "https://github.com/RockinChaos/Shiru#readme",
   "scripts": {
@@ -28,6 +28,7 @@
   "dependencies": {
     "@paymoapp/electron-shutdown-handler": "^1.1.2",
     "@xhayper/discord-rpc": "^1.3.0",
+    "concurrently": "^9.2.1",
     "jimp": "0.22.12",
     "powertoast": "^3.0.0",
     "utp-native": "^2.5.3"
@@ -62,7 +63,7 @@
       {
         "ext": "torrent",
         "name": "Torrent File",
-        "description": "BitTorrent streaming, watch anime in real-time",
+        "description": "Play and manage your personal torrent media",
         "role": "Viewer"
       }
     ],
@@ -105,11 +106,11 @@
     "linux": {
       "artifactName": "${os}-${productName}-v${version}.${ext}",
       "category": "AudioVideo;Video",
-      "description": "BitTorrent streaming software with no paws in the way—watch anime in real-time, no waiting for downloads!",
+      "description": "Manage your personal media library, organize your collection, and stream your content in real time, no waiting required!",
       "maintainer": "RockinChaos <RockinChaos@users.noreply.github.com>",
       "desktop": {
         "entry": {
-          "Comment": "BitTorrent streaming software with no paws in the way—watch anime in real-time, no waiting for downloads!",
+          "Comment": "Manage your personal media library, organize your collection, and stream your content in real time, no waiting required!",
           "Keywords": "anime",
           "MimeType": "x-scheme-handler/shiru;"
         }

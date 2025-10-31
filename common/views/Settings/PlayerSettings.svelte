@@ -77,7 +77,7 @@
 </SettingCard>
 
 <h4 class='mb-10 font-weight-bold'>Language Settings</h4>
-<SettingCard title='Preferred Subtitle Language' description="What subtitle language to automatically select when a video is loaded if it exists. This won't find torrents with this language automatically. If not found defaults to English.">
+<SettingCard title='Preferred Subtitle Language' description="What subtitle language to automatically select when a video is loaded if it exists. This won't find sources with this language automatically. If not found defaults to English.">
   <select class='form-control bg-dark mw-220 w-220 text-truncate' bind:value={settings.subtitleLanguage}>
     <option value=''>None</option>
     <option value='eng' selected>English</option>

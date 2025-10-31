@@ -3,10 +3,13 @@
 		<img src="./docs/assets/logo_filled.svg" width="400" alt="Shiru">
 	</a>
 </p>
-<h4 align="center"><b>BitTorrent streaming software with no paws in the way—watch anime in real-time, no waiting for downloads!</b></h4>
-<p align="center">
-  <i>🐾 The ultimate torrent-based anime player — lightweight, powerful, and paws-itively fast 🐾</i>
-</p>
+<h4 align="center"><b>Manage your personal media library, organize your collection, and stream your content in real time, no waiting required!</b></h4>
+
+> [!IMPORTANT]
+> This application **does not host, distribute, or provide media content**.  
+> It is intended solely as a **personal media library manager** for organizing and playing content that you **legally own**.
+> 
+> Please ensure that any media you use with this app is obtained **legally** and that you respect all applicable **copyright laws**.
 
 <p align="center">
   <a href="https://github.com/RockinChaos/Shiru/wiki/">📚 Wiki</a> •
@@ -19,7 +22,6 @@
 https://github.com/user-attachments/assets/4fa7d60e-ae48-4fb9-9d20-f129f7f907a9
 
 <p align="center">
-  <a href="https://discord.gg/D5FnJ7C"><img src="https://img.shields.io/discord/291764091239006208?label=discord&color=5865F2&logo=discord&logoColor=white&style=flat-square" alt="Join Discord"></a>
   <a href="https://github.com/RockinChaos/Shiru/releases/latest/"><img alt="Downloads" src="https://img.shields.io/github/downloads/RockinChaos/Shiru/total?style=flat-square"></a>
   <a href="https://github.com/RockinChaos/Shiru/releases/latest/"><img alt="Latest Release" src="https://img.shields.io/github/v/release/RockinChaos/Shiru?style=flat-square"></a>
   <a href="https://github.com/RockinChaos/Shiru/commits"><img alt="Last Commit" src="https://img.shields.io/github/last-commit/RockinChaos/Shiru?style=flat-square"></a>
@@ -29,15 +31,16 @@ https://github.com/user-attachments/assets/4fa7d60e-ae48-4fb9-9d20-f129f7f907a9
 
 ## 📃 **About**
 
-**Shiru** is a fork of [Miru v5.5.10](https://github.com/ThaUnknown/miru/tree/c21139af1f830cf6a41dde4fa3469ff5d4195f7b) that enhances the anime streaming experience with a feature-rich environment and full mobile support. It blends the power of BitTorrent streaming with the convenience of traditional streaming platforms.
+**Shiru** is designed to enhance your personal media experience with a feature-rich environment and full mobile support. It provides a seamless way to organize, track, and play content you legally own.
 
-Shiru allows you to stream anime *in real-time* with no waiting for downloads, combining the advantages of high-speed torrents, great video quality, and fast releases — all without ads or tracking.
+Shiru lets you enjoy your collection in real time, with fast playback, high-quality video, and a clean, ad-free interface.
+
 
 ### ✨ Key Features:
 - 🪄 **Anime integration with AniList & MyAnimeList**
 - 💬 **Full subtitle support** with softcoded and external files
 - ⏩ **Seamless video controls** and keyboard shortcuts
-- 🌐 **Torrent streaming in real-time**
+- 🌐 **Real-time library playback** — fast access to content you own
 
 ---
 
@@ -50,15 +53,13 @@ Shiru allows you to stream anime *in real-time* with no waiting for downloads, c
     - Rate and score anime.
     - Explore related anime.
 
-- 🌐 **Torrents**:
-    - Auto-find torrents for episodes.
-    - Recognize torrents by anime.
-    - Support for custom RSS feeds and resolution settings.
-    - Stream in real-time with no wait.
-    - Selectable downloads' folder.
+- 🌐 **Advanced content fetching** (for legally owned media):
+    - Automatically detect your collection's episodes.
+    - Recognize content by series.
+    - Support for custom feeds and resolution preferences.
+    - Stream your content in real time without waiting.
     - Support for custom [extensions](https://github.com/RockinChaos/Shiru/wiki/Extensions).
-    - Support for most popular BEP's.
-    - Custom download/upload speeds.
+    - Adjustable network speeds.
 
 - 🔔 **Dub & Sub Notifications**:
     - Schedules and tracking for both dub and sub releases.
@@ -98,7 +99,7 @@ Shiru allows you to stream anime *in real-time* with no waiting for downloads, c
     - Switching between multiple audios.
     - Discord Rich Presence integration.
     - Preview thumbnails and autoplay next episodes.
-    - Torrent download progress visible on the seek bar.
+    - Progress indicators visible on the seek bar
 
 ## ⚙️ **Installation**
 
@@ -139,7 +140,7 @@ winget install shiru
 
 ## 🔧 Building & Development
 
-Credit to [Migu](https://github.com/NoCrypt/migu) for doing the legwork on this.
+Credit to [NoCrypt](https://github.com/NoCrypt) for doing the legwork on this.
 
 ### 📋 Requirements:
 - PNPM (or any package manager)
@@ -206,6 +207,8 @@ Credit to [Migu](https://github.com/NoCrypt/migu) for doing the legwork on this.
    ```bash
    pnpm build:app
    ```
+
+---
 
 ## 📜 License
 
