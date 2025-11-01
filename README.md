@@ -144,7 +144,7 @@ Credit to [NoCrypt](https://github.com/NoCrypt) for doing the legwork on this.
 
 ### 📋 Requirements:
 - PNPM (or any package manager)
-- NodeJS 22.15.0
+- NodeJS 22.20.0
 - Docker (with WSL on Windows)
 - ADB & Android Studio (SDK 34)
 - Java 21 (JDK)
