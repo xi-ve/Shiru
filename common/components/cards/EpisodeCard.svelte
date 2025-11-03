@@ -47,7 +47,7 @@
   function setClickState() {
     const episode = data.episode || (media?.episodes === 1 && media?.episodes)
     if (!$prompt && episode && !Array.isArray(episode) && (episode - 1) >= 1 && media?.mediaListEntry?.status !== 'COMPLETED' && (media?.mediaListEntry?.progress || -1) < (episode - 1)) prompt.set(true)
-    else episode ? (media ? playActive(data.hash, { media, episode }, data.link) : data.onclick()) : viewMedia()
+    else episode ? (media ? playActive(data.hash, { media, episode }, data.link, !data.link) : data.onclick()) : viewMedia()
     clicked.set(true)
     setTimeout(() => clicked.set(false)).unref?.()
   }

@@ -11,7 +11,7 @@
         const activeHash = autoFile && getActiveHash([...(hash && hash !== resolvedHash ? [hash] : []), ...(resolvedHash ? [resolvedHash] : [])], false)
         if (activeHash && loadedTorrent.value?.infoHash !== activeHash && loadedTorrent.value?.fileHash !== activeHash) { // We have a cached and active hash with the requested media and episode, its predicted we should use this.
             window.dispatchEvent(new CustomEvent('add', { detail: { resolvedHash: activeHash, search } }))
-        } else if (autoFile && magnet && (!hash || (hash !== loadedTorrent.value?.infoHash && hash !== loadedTorrent.value?.fileHash))) { // Nothing found, request download from magnet.
+        } else if ((autoFile || !prompt) && magnet && (!hash || (hash !== loadedTorrent.value?.infoHash && hash !== loadedTorrent.value?.fileHash))) { // Nothing found, request download from magnet.
             window.dispatchEvent(new CustomEvent('play-torrent', { detail: { magnet } }))
         } else if (prompt) { // Nothing found and no magnet, prompt user to locate torrent.
             window.dispatchEvent(new CustomEvent('play-anime', {
