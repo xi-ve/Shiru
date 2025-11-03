@@ -50,6 +50,11 @@ document.addEventListener('selectionchange', () => {
 
 if (SUPPORTS.isAndroid) {
   document.addEventListener('touchstart', () => window.Capacitor.Plugins.StatusBar.hide(), { passive: true })
+} else {
+  // don't focus what we can't even tab to, fixes function keys being used to focus.
+  document.addEventListener('focusin', (e) => {
+    if (e.target.getAttribute('tabindex') === '-1') e.target.blur()
+  }, true)
 }
 /** @typedef {{element: Element, x: number, y: number, inViewport: boolean}} ElementPosition  */
 
