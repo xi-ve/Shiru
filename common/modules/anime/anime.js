@@ -203,22 +203,20 @@ export async function anitomyscript (...args) {
     if (Number(obj.anime_season) > 1) obj.anime_title += ' S' + Number(obj.anime_season)
     if ((!obj.anime_type || ((Array.isArray(obj.anime_type) ? obj.anime_type[0] : obj.anime_type).toUpperCase()).includes('OAV')) && obj.anime_title.match(/\s*\(?oav\)?\s*$/i)) {
       obj.anime_title = obj.anime_title.replace(/\s*\(?oav\)?\s*$/i, '')
-      if (!obj.anime_type) obj.anime_type = 'OAV'
+      addAnimeType(obj, 'OAV')
     }
-    const trailerRegex = /(^|\s|[[(-_])trailer(?=$|\s|[\]))-_])/i
-    if (obj.file_name && trailerRegex.test(obj.file_name)) {
-      if (!obj.anime_type) obj.anime_type = 'Trailer'
-      else if (Array.isArray(obj.anime_type)) {
-        if (!obj.anime_type.some(type => type.toUpperCase() === 'TRAILER')) obj.anime_type.push('Trailer')
-      } else if (typeof obj.anime_type === 'string') {
-        const typeArray = [obj.anime_type]
-        if (!typeArray.some(type => type.toUpperCase() === 'TRAILER')) typeArray.push('Trailer')
-        obj.anime_type = typeArray
-      }
-    }
+    if (obj.file_name?.match(/(^|[\s()[\]\-_])NCED($|[\s()[\]\-_])/i)) addAnimeType(obj, 'NCED')
+    if (obj.file_name?.match(/(^|[\s()[\]\-_])NCOP($|[\s()[\]\-_])/i)) addAnimeType(obj, 'NCOP')
+    if (obj.file_name && /(^|\s|[[(-_])trailer(?=$|\s|[\]))-_])/i.test(obj.file_name)) addAnimeType(obj, 'Trailer')
   }
   debug('AnitoMyScript found titles:', JSON.stringify(parseObjs))
   return parseObjs
+}
+
+function addAnimeType(obj, newType) {
+  if (!obj.anime_type) obj.anime_type = newType
+  else if (Array.isArray(obj.anime_type) && !obj.anime_type.some(type => type.toUpperCase() === newType.toUpperCase())) obj.anime_type.push(newType)
+  else if (typeof obj.anime_type === 'string' && obj.anime_type.toUpperCase() !== newType.toUpperCase()) obj.anime_type = [obj.anime_type, newType]
 }
 
 /**
