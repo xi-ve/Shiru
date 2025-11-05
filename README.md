@@ -5,12 +5,6 @@
 </p>
 <h4 align="center"><b>Manage your personal media library, organize your collection, and stream your content in real time, no waiting required!</b></h4>
 
-> [!IMPORTANT]
-> This application **does not host, distribute, or provide media content**.  
-> It is intended solely as a **personal media library manager** for organizing and playing content that you **legally own**.
-> 
-> Please ensure that any media you use with this app is obtained **legally** and that you respect all applicable **copyright laws**.
-
 <p align="center">
   <a href="https://github.com/RockinChaos/Shiru/wiki/">📚 Wiki</a> •
   <a href="https://github.com/RockinChaos/Shiru/wiki/features/">✨ Features</a> •
@@ -18,6 +12,10 @@
   <a href="#-building--development">🔧 Building & Development</a> •
   <a href="https://github.com/RockinChaos/Shiru/releases/latest/">⬇️ Download</a>
 </p>
+
+> [!IMPORTANT]
+> This application **does not host, distribute, or provide media content**.  
+> Shiru is intended solely as a **personal media library manager** for organizing and playing content that you **legally own**. Please ensure that any media you use with this app is obtained **legally** and that you respect all applicable **copyright laws**.
 
 https://github.com/user-attachments/assets/4fa7d60e-ae48-4fb9-9d20-f129f7f907a9
 
@@ -40,7 +38,7 @@ Shiru lets you enjoy your collection in real time, with fast playback, high-qual
 - 🪄 **Anime integration with AniList & MyAnimeList**
 - 💬 **Full subtitle support** with softcoded and external files
 - ⏩ **Seamless video controls** and keyboard shortcuts
-- 🌐 **Real-time library playback** — fast access to content you own
+- 🌐 **Real-time library playback** for fast access to content you own
 
 ---
 
@@ -54,8 +52,8 @@ Shiru lets you enjoy your collection in real time, with fast playback, high-qual
     - Explore related anime.
 
 - 🌐 **Advanced content fetching** (for legally owned media):
-    - Automatically detect your collection's episodes.
     - Recognize content by series.
+    - Automatically detect episodes from file names.
     - Support for custom feeds and resolution preferences.
     - Stream your content in real time without waiting.
     - Support for custom [extensions](https://github.com/RockinChaos/Shiru/wiki/Extensions).
