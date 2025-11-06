@@ -31,6 +31,8 @@
       _status = $status
     }
   }
+  $: fullscreen = false
+  IPC.on('isFullscreen', (isFullscreen) => fullscreen = isFullscreen)
 </script>
 
 <div class='sidebar z-80 d-md-block' class:animated={$settings.expandingSidebar}>
@@ -39,7 +41,7 @@
   <div class='sidebar-menu h-full d-flex flex-column m-0 pb-5 animate' class:br-10={!$settings.expandingSidebar}>
     <div class='w-50 m-10 p-5 mb-0 top-0 flex-shrink-0 pointer-events-none {_status === `offline` ? `h-80` : `h-50`}' class:status-transition={statusTransition} class:d-none={SUPPORTS.isAndroid}/>
     {#if !SUPPORTS.isAndroid}
-      <div class='d-flex align-items-center justify-content-center m-0 p-0 mt-5' style='width: var(--sidebar-width)'>
+      <div class='d-flex align-items-center justify-content-center m-0 p-0 mt-5' style='width: var(--sidebar-width); margin-top:{window.version?.platform === `darwin` ? fullscreen ? `1.5rem` : `2.5rem` : `.5rem`} !important'>
         <SidebarLink click={goBack} icon='moveleft' css='p-0 m-0 ml-5 h-auto w-30' innerCss='rounded-left-block' {page}>
           <MoveLeft size={'2.5rem'} class='flex-shrink-0 rounded m-0' strokeWidth='2.5' color={$canGoBack ? 'currentColor' : 'var(--gray-color-very-dim)'} />
         </SidebarLink>
