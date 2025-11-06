@@ -98,6 +98,7 @@
     },
     "win": {
       "artifactName": "${os}-${productName}-v${version}.${ext}",
+      "icon": "buildResources/icon.ico",
       "target": [
         "nsis",
         "portable"
@@ -105,6 +106,7 @@
     },
     "linux": {
       "artifactName": "${os}-${productName}-v${version}.${ext}",
+      "icon": "buildResources/icon.png",
       "category": "AudioVideo;Video",
       "description": "Manage your personal media library, organize your collection, and stream your content in real time, no waiting required!",
       "maintainer": "RockinChaos <RockinChaos@users.noreply.github.com>",
