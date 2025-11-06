@@ -1,6 +1,6 @@
 <p align="center">
 	<a href="https://github.com/RockinChaos/Shiru">
-		<img src="./docs/assets/logo_filled.svg" width="400" alt="Shiru">
+		<img src="./.github/docs/assets/logo_filled.svg" width="400" alt="Shiru">
 	</a>
 </p>
 <h4 align="center"><b>Manage your personal media library, organize your collection, and stream your content in real time, no waiting required!</b></h4>
@@ -14,7 +14,8 @@
 </p>
 
 > [!IMPORTANT]
-> This application **does not host, distribute, or provide media content**.  
+> This application **does not host, distribute, or provide media content**.
+> 
 > Shiru is intended solely as a **personal media library manager** for organizing and playing content that you **legally own**. Please ensure that any media you use with this app is obtained **legally** and that you respect all applicable **copyright laws**.
 
 https://github.com/user-attachments/assets/4fa7d60e-ae48-4fb9-9d20-f129f7f907a9
