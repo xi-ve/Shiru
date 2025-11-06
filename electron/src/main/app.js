@@ -16,8 +16,9 @@ import Dialog from './dialog.js'
 import Debug from './debugger.js'
 
 export default class App {
-  icon = nativeImage.createFromPath(join(__dirname, '/icon_filled.ico'))
-  trayNotify = nativeImage.createFromPath(join(__dirname, '/icon_filled_notify.ico'))
+  icon = nativeImage.createFromPath(join(__dirname, process.platform === 'darwin' ? '/icon_filled.png' : '/icon_filled.ico'))
+  trayIcon = process.platform === 'darwin' ? nativeImage.createFromPath(join(__dirname, '/iconTemplate.png')) : this.icon
+  trayNotifyIcon = nativeImage.createFromPath(join(__dirname, process.platform === 'darwin' ? '/iconNotifyTemplate.png' : '/icon_filled_notify.ico'))
 
   torrentLoad = null
   webtorrentWindow = this.makeWebTorrentWindow()
@@ -49,7 +50,7 @@ export default class App {
   protocol = new Protocol(this.mainWindow)
   updater = new Updater(this.mainWindow, () => this.webtorrentWindow)
   dialog = new Dialog()
-  tray = new Tray(this.icon)
+  tray = new Tray(this.trayIcon)
   imageDir = join(app.getPath('userData'), 'Cache', 'Image_Data')
   debug = new Debug()
   close = false
@@ -327,11 +328,11 @@ export default class App {
   setTrayIcon(notificationCount, verify) {
     if (!verify) this.notificationCount = notificationCount
     if (this.notificationCount <= 0 || !this.notificationCount) {
-      this.tray.setImage(this.icon)
+      this.tray.setImage(this.trayIcon)
       this.mainWindow.setOverlayIcon(null, '')
     } else {
       this.mainWindow.setOverlayIcon(nativeImage.createFromPath(join(__dirname, `/icon_filled_notify_${this.notificationCount < 10 ? this.notificationCount : `filled`}.png`)), `${this.notificationCount} Unread Notifications`)
-      this.tray.setImage(this.trayNotify)
+      this.tray.setImage(this.trayNotifyIcon)
     }
   }
 
