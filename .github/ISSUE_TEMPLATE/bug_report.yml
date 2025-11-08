@@ -67,8 +67,8 @@ body:
         3. Toggle the 'Prefer Dubs' option
         4. Return to home screen
         5. Bug occurs: App crashes/freezes/shows error
-      validations:
-        required: true
+    validations:
+      required: true
 
   - type: textarea
     attributes:
