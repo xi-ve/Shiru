@@ -1124,9 +1124,14 @@
     if (JSON.stringify(chapters) !== JSON.stringify(_chapters)) chapters = _chapters
 
     const sanitised = []
+    let chapterCounter = 1
     for (let { start, end, text } of _chapters) {
       if (start > safeduration * 1000) continue
       if (end > safeduration * 1000) end = safeduration * 1000
+      if (text && /^[\d:.\s]+$/.test(text)) { // Replace numerical/timestamp-like chapter names
+        text = `Chapter ${chapterCounter}`
+        chapterCounter++
+      }
       sanitised.push({ size: (end / 10 / safeduration) - (start / 10 / safeduration), text })
     }
     return sanitised
