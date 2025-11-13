@@ -143,6 +143,7 @@
     right: 0;
     height: 100%;
     width: 8rem;
+    z-index: 30;
     background: var(--section-end-gradient);
     pointer-events: none;
   }

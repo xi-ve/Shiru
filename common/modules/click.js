@@ -10,26 +10,20 @@ const noop = _ => {}
 
 document.addEventListener('mousedown', () => lastInteractionMethod = 'mouse')
 document.addEventListener('touchstart', () => lastInteractionMethod = 'touch', { passive: true })
-document.addEventListener('pointerup', selectionChange)
 document.addEventListener('focusin', (e) => {
   if (lastInteractionMethod !== 'dpad') return
-  selectionChange(e)
-})
-function selectionChange(e) {
   const activeEl = document.activeElement
   const isTextInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)
   if (!isTextInput && !e.target?.closest('.select-all')) window.getSelection()?.removeAllRanges()
-  setTimeout(() => {
-    if (lastTapTarget !== e.target && (!lastTapCurrent || !e.target || !lastTapCurrent.contains(e.target))) {
-      lastTapElement?.(false)
-      lastTapElement = null
-      lastHoverElement?.(false)
-      lastHoverElement = null
-      lastTapCurrent = null
-      lastTapTarget = null
-    }
-  }, 10)
-}
+  if (lastTapTarget !== e.target && (!lastTapCurrent || !e.target || !lastTapCurrent.contains(e.target))) {
+    lastTapElement?.(false)
+    lastTapElement = null
+    lastHoverElement?.(false)
+    lastHoverElement = null
+    lastTapCurrent = null
+    lastTapTarget = null
+  }
+})
 
 document.addEventListener('pointercancel', (e) => {
   if (lastTapTarget !== e.target && (!lastTapCurrent || !e.target || !lastTapCurrent.contains(e.target))) {
@@ -127,18 +121,29 @@ export function focus(node, focusUpdate = noop) {
     clearTimeout(focusTimeout)
     clearTimeout(blurTimeout)
   }
-  node.addEventListener('focus', e => {
+  function handleOutsideClick(e) {
+    const focused = e.target
+    if (node && focused?.offsetParent !== null && !node.contains(focused)) {
+      focusUpdate(false)
+      lastTapElement = null
+      document.removeEventListener('pointerup', handleOutsideClick)
+    }
+  }
+  node.addEventListener('pointerleave', clearTimeouts)
+  node.addEventListener('focus', () => {
     clearTimeouts()
+    document.addEventListener('pointerup', handleOutsideClick)
     focusTimeout = setTimeout(() => focusUpdate(true), 800)
     focusTimeout.unref?.()
   })
-  node.addEventListener('focusout', e => {
+  node.addEventListener('focusout', () => {
     clearTimeouts()
     blurTimeout = setTimeout(() => {
       const focused = document.activeElement
       if (node && focused?.offsetParent !== null && !node.contains(focused)) {
         focusUpdate(false)
         lastTapElement = null
+        document.removeEventListener('pointerup', handleOutsideClick)
       }
     })
     blurTimeout.unref?.()
@@ -211,6 +216,15 @@ export function hoverClick(node, [cb = noop, hoverUpdate = noop, rcb = noop]) {
   let pointerType = 'touch'
   if (!node.hasAttribute('tabindex')) node.tabIndex = 0
   node.role = 'button'
+  function handleOutsideClick(e) {
+    const focused = e.target
+    if (node && focused?.offsetParent !== null && !node.contains(focused)) {
+      hoverUpdate(false)
+      lastTapElement = null
+      lastHoverElement = null
+      document.removeEventListener('pointerup', handleOutsideClick)
+    }
+  }
   node.addEventListener('pointerenter', e => {
     if (e.pointerType !== 'touch') {
       if (!node.contains(e.target)) {
@@ -218,6 +232,7 @@ export function hoverClick(node, [cb = noop, hoverUpdate = noop, rcb = noop]) {
         lastTapElement?.(false)
       }
       hoverUpdate(true)
+      document.addEventListener('pointerup', handleOutsideClick)
       lastHoverElement = hoverUpdate
       lastTapCurrent = e.currentTarget
       pointerType = e.pointerType
@@ -231,9 +246,11 @@ export function hoverClick(node, [cb = noop, hoverUpdate = noop, rcb = noop]) {
       lastTapElement = null
       navigator.vibrate(15)
       hoverUpdate(false)
+      document.removeEventListener('pointerup', handleOutsideClick)
       cb(e)
     } else {
       hoverUpdate(true, true)
+      document.addEventListener('pointerup', handleOutsideClick)
       lastTapElement = hoverUpdate
       lastTapTarget = e.target
     }
@@ -251,6 +268,7 @@ export function hoverClick(node, [cb = noop, hoverUpdate = noop, rcb = noop]) {
         cb(e)
       } else {
         hoverUpdate(true, true)
+        document.addEventListener('pointerup', handleOutsideClick)
         if (!SUPPORTS.isAndroid) lastTapElement = hoverUpdate
       }
     }
@@ -258,12 +276,18 @@ export function hoverClick(node, [cb = noop, hoverUpdate = noop, rcb = noop]) {
   node.addEventListener('pointerup', e => {
     if (e.pointerType === 'mouse') {
       e.stopPropagation()
-      setTimeout(() => hoverUpdate(false))
+      setTimeout(() => {
+        hoverUpdate(false)
+        document.removeEventListener('pointerup', handleOutsideClick)
+      })
     }
   })
   node.addEventListener('pointerleave', e => {
     lastHoverElement = hoverUpdate
-    if (e.pointerType === 'mouse') hoverUpdate(false)
+    if (e.pointerType === 'mouse') {
+      hoverUpdate(false)
+      document.removeEventListener('pointerup', handleOutsideClick)
+    }
   })
 }
 
@@ -313,10 +337,12 @@ export function dragScroll(node) {
   let dragging = false
   let activePointer = null
   let threshold = 50
-  let movedX = 0
-  let movedY = 0
+  let dragged = false
+  let draggedX = 0
+  let draggedY = 0
   let startX = 0
   let startY = 0
+  let suppressClick = false
   const controller = new AbortController()
   const opts = { signal: controller.signal }
   node.addEventListener('pointerleave', () => {
@@ -325,10 +351,28 @@ export function dragScroll(node) {
     }
     dragging = false
   }, opts)
-  node.addEventListener('click', () => dragging = false, opts)
+  node.addEventListener('click', (e) => {
+    if (suppressClick) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    dragging = false
+  }, opts)
   node.addEventListener('mouseleave', () => dragging = false, opts)
-  node.addEventListener('pointerdown', e => activePointer = e.pointerId, opts) // capture this pointer, works great for hiding preview cards.
+  node.addEventListener('pointerdown', e => activePointer = e.pointerId, opts)
   node.addEventListener('mouseup', () => {
+    if (dragging && activePointer) {
+      node.style.removeProperty('cursor')
+      try { node.releasePointerCapture(activePointer) } catch {}
+    }
+    dragging = false
+  }, opts)
+  node.addEventListener('pointerup', (e) => {
+    if (dragging && dragged) {
+      suppressClick = true
+      e.stopPropagation()
+      setTimeout(() => suppressClick = false).unref?.()
+    }
     if (dragging && activePointer) {
       node.style.removeProperty('cursor')
       try { node.releasePointerCapture(activePointer) } catch {}
@@ -337,10 +381,11 @@ export function dragScroll(node) {
   }, opts)
   node.addEventListener('mousedown', e => {
     const target = e.target
-    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target.isContentEditable) return // Do not drag if user clicks an input, textarea, or editable content.
+    if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target.isContentEditable) return
+    dragged = false
     dragging = true
-    movedX = 0
-    movedY = 0
+    draggedX = 0
+    draggedY = 0
     startX = e.clientX
     startY = e.clientY
   }, opts)
@@ -351,13 +396,16 @@ export function dragScroll(node) {
       dragging = false
       return true
     }
-    movedX += Math.abs(e.clientX - startX)
-    movedY += Math.abs(e.clientY - startY)
+    draggedX += Math.abs(e.clientX - startX)
+    draggedY += Math.abs(e.clientY - startY)
     node.scrollBy(startX - e.clientX, startY - e.clientY)
     startX = e.clientX
     startY = e.clientY
     node.style.cursor = 'grabbing'
-    if (movedX > threshold || movedY > threshold) try { node.setPointerCapture(activePointer) } catch {}
+    if (draggedX > threshold || draggedY > threshold) {
+      dragged = true
+      try { node.setPointerCapture(activePointer) } catch {}
+    }
   }, opts)
   function isMouseLeave(node, x, y) {
     const rect = node.getBoundingClientRect()

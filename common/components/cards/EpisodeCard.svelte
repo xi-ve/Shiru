@@ -23,6 +23,7 @@
   export let section = false
 
   let preview = false
+  let ignoreFocus = false
   let prompt = writable(false)
   let clicked = writable(false)
 
@@ -52,6 +53,8 @@
     setTimeout(() => clicked.set(false)).unref?.()
   }
   function setHoverState (state, tapped) {
+    const focused = document.activeElement
+    if (container && focused?.offsetParent !== null && (container.contains(focused)) && (!previewCard || !previewCard.contains(focused))) ignoreFocus = true
     const episode = data.episode || (media?.episodes === 1 && media?.episodes)
     if (!$prompt && episode && !Array.isArray(episode) && (episode - 1) >= 1 && media?.mediaListEntry?.status !== 'COMPLETED' && (media?.mediaListEntry?.progress || -1) < (episode - 1)) prompt.set(!!tapped)
     if (!$prompt || !$clicked) {
@@ -67,10 +70,14 @@
   let focusTimeout
   let blurTimeout
   function handleFocus() {
+    if (ignoreFocus || preview) return
     clearTimeouts()
-    if (preview) return
     focusTimeout = setTimeout(() => {
-      if (settings.value.cardPreview) preview = true
+      if (settings.value.cardPreview) {
+        preview = true
+        ignoreFocus = true
+        document.addEventListener('pointerup', handleOutsideClick)
+      }
     }, 800)
     focusTimeout.unref?.()
   }
@@ -78,14 +85,27 @@
     clearTimeouts()
     blurTimeout = setTimeout(() => {
       const focused = document.activeElement
-      if (container && previewCard && focused?.offsetParent !== null && !container.contains(focused) && !previewCard.contains(focused)) {
+      const lostFocus = container && focused?.offsetParent !== null && !container.contains(focused)
+      const lostPreviewFocus = previewCard && !previewCard.contains(focused)
+      if (lostFocus && lostPreviewFocus) {
         preview = false
+        ignoreFocus = false
         setTimeout(() => {
           if (!preview) prompt.set(false)
         }).unref?.()
-      }
+        document.removeEventListener('pointerup', handleOutsideClick)
+      } else if (lostFocus || (previewCard && previewCard.contains(focused))) ignoreFocus = false
     })
     blurTimeout.unref?.()
+  }
+  function handleOutsideClick(event) {
+    if (container && previewCard && !container.contains(event.target) && !previewCard.contains(event.target)) {
+      preview = false
+      setTimeout(() => {
+        if (!preview) prompt.set(false)
+      }).unref?.()
+      document.removeEventListener('pointerup', handleOutsideClick)
+    }
   }
   function clearTimeouts() {
     clearTimeout(focusTimeout)
@@ -100,11 +120,13 @@
     sinceInterval.unref?.()
   })
   onDestroy(() => {
+    document.removeEventListener('pointerup', handleOutsideClick)
     container.removeEventListener('focusout', handleBlur)
     clearTimeouts()
     clearInterval(sinceInterval)
   })
   $: if (preview) clearTimeout(focusTimeout)
+  $: if (!preview) document.removeEventListener('pointerup', handleOutsideClick)
 </script>
 
 <div bind:this={container} class='d-flex p-20 pb-10 position-relative episode-card' class:mb-150={section} class:not-reactive={!$reactive} use:hoverClick={[setClickState, setHoverState, viewMedia]} on:focus={handleFocus}>

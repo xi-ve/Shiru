@@ -28,7 +28,10 @@
   }
 
   let preview = false
+  let ignoreFocus = false
   function setHoverState(state) {
+    const focused = document.activeElement
+    if (container && focused?.offsetParent !== null && (container.contains(focused)) && (!previewCard || !previewCard.contains(focused))) ignoreFocus = true
     if (settings.value.cardPreview) preview = state
     else if (state) viewMedia()
   }
@@ -38,10 +41,14 @@
   let focusTimeout
   let blurTimeout
   function handleFocus() {
+    if (ignoreFocus || preview) return
     clearTimeouts()
-    if (preview) return
     focusTimeout = setTimeout(() => {
-      if (settings.value.cardPreview) preview = true
+      if (settings.value.cardPreview) {
+        preview = true
+        ignoreFocus = true
+        document.addEventListener('pointerup', handleOutsideClick)
+      }
     }, 800)
     focusTimeout.unref?.()
   }
@@ -49,9 +56,22 @@
     clearTimeouts()
     blurTimeout = setTimeout(() => {
       const focused = document.activeElement
-      if (container && previewCard && focused?.offsetParent !== null && !container.contains(focused) && !previewCard.contains(focused)) preview = false
+      const lostFocus = container && focused?.offsetParent !== null && !container.contains(focused)
+      const lostPreviewFocus = previewCard && !previewCard.contains(focused)
+      if (lostFocus && lostPreviewFocus) {
+        preview = false
+        ignoreFocus = false
+        document.removeEventListener('pointerup', handleOutsideClick)
+      } else if (lostFocus || (previewCard && previewCard.contains(focused))) ignoreFocus = false
     })
     blurTimeout.unref?.()
+  }
+  function handleOutsideClick(event) {
+    if (container && previewCard && !container.contains(event.target) && !previewCard.contains(event.target)) {
+      preview = false
+      ignoreFocus = false
+      document.removeEventListener('pointerup', handleOutsideClick)
+    }
   }
   function clearTimeouts() {
     clearTimeout(focusTimeout)
@@ -70,6 +90,7 @@
     }
   })
   onDestroy(() => {
+    document.removeEventListener('pointerup', handleOutsideClick)
     container.removeEventListener('focusout', handleBlur)
     clearTimeouts()
     clearTimeout(airingInterval)
