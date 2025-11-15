@@ -8,8 +8,7 @@ function createWindow () {
 }
 
 if (!app.requestSingleInstanceLock()) {
-  if (process.platform === 'linux') process.kill(process.pid, 'SIGKILL') // Electron v39 Linux bug workaround - process won't quit gracefully
-  else app.quit()
+  app.quit()
 } else {
   app.on('ready', createWindow)
 
