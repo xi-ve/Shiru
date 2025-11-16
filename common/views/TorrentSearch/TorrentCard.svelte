@@ -4,9 +4,9 @@
   import { click } from '@/modules/click.js'
   import { fastPrettyBytes, since, matchPhrase, createListener } from '@/modules/util.js'
   import { getEpisodeMetadataForMedia, getKitsuMappings } from '@/modules/anime/anime.js'
+  import { copyToClipboard } from '@/modules/clipboard.js'
   import { malDubs } from '@/modules/anime/animedubs.js'
   import { Database, BadgeCheck, FileQuestion } from 'lucide-svelte'
-  import { toast } from 'svelte-sonner'
 
   const { reactive, init } = createListener(['torrent-button', 'torrent-safe-area'])
   init(true)
@@ -123,14 +123,6 @@
     for (const term of audio) simpleName = simpleName.replace(term, '')
     return simpleName.replace(/[[{(]\s*[\]})]/g, '').replace(/\s+/g, ' ').trim()
   }
-
-  function copyToClipboard (text) {
-    navigator.clipboard.writeText(text)
-    toast('Copied to clipboard', {
-      description: 'Copied magnet URL to clipboard',
-      duration: 5000
-    })
-  }
 </script>
 
 <script>
@@ -164,7 +156,7 @@
   }
 </script>
 
-<div class='card bg-dark p-15 d-flex mx-0 pointer mb-10 mt-0 position-relative scale rounded-3' class:not-reactive={!$reactive} class:glow={countdown > -1} role='button' tabindex='0' use:click={() => play(result)} on:contextmenu|preventDefault={() => copyToClipboard(result.link)} title={result.parseObject.file_name}>
+<div class='card bg-dark p-15 d-flex mx-0 pointer mb-10 mt-0 position-relative scale rounded-3' class:not-reactive={!$reactive} class:glow={countdown > -1} role='button' tabindex='0' use:click={() => play(result)} on:contextmenu|preventDefault={() => copyToClipboard(result.link, 'magnet URL')} title={result.parseObject.file_name}>
   <div class='position-absolute top-0 left-0 w-full h-full'>
     <div class='position-absolute w-full h-full overflow-hidden rounded-3' class:image-border={type === 'default'} >
       <SmartImage class='img-cover w-full h-full' images={[

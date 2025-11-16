@@ -1,4 +1,14 @@
 import 'browser-event-target-emitter'
+import { toast } from 'svelte-sonner'
+
+export function copyToClipboard(text, detail) {
+  if (!text) return
+  navigator.clipboard.writeText(text)
+  toast('Copied to clipboard', {
+    description: `Copied${detail ? ` ${detail}` : ''} to clipboard`,
+    duration: 5_000
+  })
+}
 
 export default new class extends EventTarget {
   constructor () {
