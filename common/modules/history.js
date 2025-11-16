@@ -210,8 +210,13 @@ class HistoryManager {
    * @param {any} value New store value
    */
   handleChange(type, value) {
-    if (value == null) return
-    if ((type === 'updateState' && value === 'ready') || (type === 'notifyView' && value === true) || !['updateState', 'notifyView'].includes(type)) {
+    if (type === 'view' && value == null) {
+      const currentEntry = this.history[this.currentIndex]
+      if (currentEntry?.type === 'view' && currentEntry.value != null) {
+        debug('View closed after being open, adding closure to history')
+        this.addHistoryEntry(type, value)
+      }
+    } else if (value != null && ((type === 'updateState' && value === 'ready') || (type === 'notifyView' && value === true) || !['updateState', 'notifyView'].includes(type))) {
       debug('Valid change detected, adding history entry', type, value)
       this.addHistoryEntry(type, value)
     }
