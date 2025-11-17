@@ -4,7 +4,7 @@ import Bottleneck from 'bottleneck'
 
 import { alToken, settings } from '@/modules/settings.js'
 import { malDubs } from '@/modules/anime/animedubs.js'
-import { isSubbedProgress } from '@/modules/anime/anime.js'
+import { isSubbedProgress, getMediaMaxEp } from '@/modules/anime/anime.js'
 import { getRandomInt, sleep } from '@/modules/util.js'
 import { printError, status } from '@/modules/networking.js'
 import { cache, caches, mediaCache } from '@/modules/cache.js'
@@ -432,7 +432,12 @@ class AnilistClient {
         case 'FINISHED_ON_DESC':
           return entry?.media?.mediaListEntry?.completedAt ? (entry.media.mediaListEntry.completedAt.year || 0) * 10000 + (entry.media.mediaListEntry.completedAt.month || 0) * 100 + (entry.media.mediaListEntry.completedAt.day || 0) : 0
         case 'PROGRESS_DESC':
-          return entry?.media?.mediaListEntry?.progress || 0
+          const totalEpisodes = entry?.media?.episodes ?? getMediaMaxEp(entry?.media) ?? 0
+          const progress = entry?.media?.mediaListEntry?.progress ?? 0
+          if (progress === 0) return Infinity
+          if (totalEpisodes === 0) return -progress
+          const distance = totalEpisodes - progress
+          return distance <= 0 ? -Infinity : distance
         case 'USER_SCORE_DESC': // doesn't exist, AniList uses SCORE_DESC for both MediaSort and MediaListSort.
           return entry?.media?.mediaListEntry?.score || 0
         case 'UPDATED_TIME_DESC':
@@ -445,6 +450,7 @@ class AnilistClient {
       list.entries = list.entries.filter(entry => entry.media).sort((a, b) => {
         const aValue = getSortValue(a)
         const bValue = getSortValue(b)
+        if (sort === 'PROGRESS_DESC') return aValue - bValue
         if (aValue === 0 && bValue !== 0) return 1
         if (bValue === 0 && aValue !== 0) return -1
         return bValue - aValue // Descending order, this will need to change to implement different sort orders in the future.
@@ -907,7 +913,15 @@ class AnilistClient {
           case 'UPDATED_TIME_DESC':
             return (b.mediaListEntry?.updatedAt || 0) - (a.mediaListEntry?.updatedAt || 0)
           case 'PROGRESS_DESC':
-            return (b.mediaListEntry?.progress || 0) - (a.mediaListEntry?.progress || 0)
+            const getSortValue = (media) => {
+              const progress = media?.mediaListEntry?.progress ?? 0
+              const totalEpisodes = media?.episodes ?? getMediaMaxEp(media) ?? 0
+              if (progress === 0) return Infinity
+              if (totalEpisodes === 0) return -progress
+              const distance = totalEpisodes - progress
+              return distance <= 0 ? -Infinity : distance
+            }
+            return getSortValue(a) - getSortValue(b)
           case 'USER_SCORE_DESC': // doesn't exist, AniList uses SCORE_DESC for both MediaSort and MediaListSort.
             return (b.mediaListEntry?.score || 0) - (a.mediaListEntry?.score || 0)
           default:

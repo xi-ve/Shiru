@@ -223,7 +223,15 @@ class MALClient {
       })
     } else if (variables.originalSort === 'list_progress_nan') {
       allMediaList?.sort((a, b) => {
-        return b.node.my_list_status.num_episodes_watched - a.node.my_list_status.num_episodes_watched
+        const getSortValue = (item) => {
+          const watched = item.node.my_list_status.num_episodes_watched ?? 0
+          if (watched === 0) return Infinity
+          if ((item.node.num_episodes ?? 0) === 0) return -watched
+          const distance = (item.node.num_episodes ?? 0) - watched
+          if (distance <= 0) return -Infinity - watched
+          return distance + watched / 100000
+        }
+        return getSortValue(a) - getSortValue(b)
       })
     }
 

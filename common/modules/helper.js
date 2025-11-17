@@ -280,12 +280,20 @@ export default class Helper {
             switch (variables.sort) {
               case 'STARTED_ON_DESC':
                 return ((b.media?.mediaListEntry?.startedAt?.year || 0) * 10000 + (b.media?.mediaListEntry?.startedAt?.month || 0) * 100 + (b.media?.mediaListEntry?.startedAt?.day || 0))
-                    - ((a.media?.mediaListEntry?.startedAt?.year || 0) * 10000 + (a.media?.mediaListEntry?.startedAt?.month || 0) * 100 + (a.media?.mediaListEntry?.startedAt?.day || 0))
+                     - ((a.media?.mediaListEntry?.startedAt?.year || 0) * 10000 + (a.media?.mediaListEntry?.startedAt?.month || 0) * 100 + (a.media?.mediaListEntry?.startedAt?.day || 0))
               case 'FINISHED_ON_DESC':
                 return ((b.media?.mediaListEntry?.completedAt?.year || 0) * 10000 + (b.media?.mediaListEntry?.completedAt?.month || 0) * 100 + (b.media?.mediaListEntry?.completedAt?.day || 0))
-                    - ((a.media?.mediaListEntry?.completedAt?.year || 0) * 10000 + (a.media?.mediaListEntry?.completedAt?.month || 0) * 100 + (a.media?.mediaListEntry?.completedAt?.day || 0))
+                     - ((a.media?.mediaListEntry?.completedAt?.year || 0) * 10000 + (a.media?.mediaListEntry?.completedAt?.month || 0) * 100 + (a.media?.mediaListEntry?.completedAt?.day || 0))
               case 'PROGRESS_DESC':
-                return (b.media?.mediaListEntry?.progress || 0) - (a.media?.mediaListEntry?.progress || 0)
+                const getSortValue = (media) => {
+                  const progress = media?.mediaListEntry?.progress ?? 0
+                  const totalEpisodes = media?.episodes ?? getMediaMaxEp(media) ?? 0
+                  if (progress === 0) return Infinity
+                  if (totalEpisodes === 0) return -progress
+                  const distance = totalEpisodes - progress
+                  return distance <= 0 ? -Infinity : distance
+                }
+                return getSortValue(a.media) - getSortValue(b.media)
               case 'USER_SCORE_DESC': // doesn't exist, AniList uses SCORE_DESC for both MediaSort and MediaListSort.
                 return (b.media?.mediaListEntry?.score || 0) - (a.media?.mediaListEntry?.score || 0)
               case 'UPDATED_TIME_DESC':
