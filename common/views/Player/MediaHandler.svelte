@@ -353,35 +353,37 @@
       let resolvedByName = []
       try {
         resolvedByName = await AnimeResolver.resolveFileAnime(failedToResolve.map(file => `${torrentName} ${file.name}`))
-      } catch (e) { debug(e) }
+      } catch (e) { console.error(e) }
       failedToResolve.forEach((file) => {
         const parseObject = resolvedByName.find(({ parseObject }) => AnimeResolver.cleanFileName(`${torrentName} ${file.name}`).includes(parseObject.file_name))
-        const failedEntry = resolved.find(result => AnimeResolver.cleanFileName(result.parseObject.file_name) === AnimeResolver.cleanFileName(file.name))
-        const animeType = failedEntry?.parseObject?.anime_type
-        if (animeType) parseObject.parseObject.anime_type = animeType
-        const failedEpisode = failedEntry?.episode || failedEntry?.parseObject?.episode_number
-        const failedSeason = failedEntry?.season || failedEntry?.parseObject?.season_number
-        if (failedEpisode) {
-          parseObject.episode = failedEpisode
-          if (parseObject.parseObject) parseObject.parseObject.episode_number = failedEpisode
+        if (parseObject?.length) {
+          const failedEntry = resolved.find(result => AnimeResolver.cleanFileName(result.parseObject.file_name) === AnimeResolver.cleanFileName(file.name))
+          const animeType = failedEntry?.parseObject?.anime_type
+          if (animeType) parseObject.parseObject.anime_type = animeType
+          const failedEpisode = failedEntry?.episode || failedEntry?.parseObject?.episode_number
+          const failedSeason = failedEntry?.season || failedEntry?.parseObject?.season_number
+          if (failedEpisode) {
+            parseObject.episode = failedEpisode
+            if (parseObject.parseObject) parseObject.parseObject.episode_number = failedEpisode
+          }
+          if (failedSeason) {
+            parseObject.season = failedSeason
+            if (parseObject.parseObject) parseObject.parseObject.season_number = failedSeason
+          }
+          if (parseObject?.failed) { // hacky fix to remove the episode number when it failed to resolved, when using the torrent name + file name the resolver has a bias toward detecting the video resolution as the episode number.
+            if (parseObject?.parseObject?.episode_number && (String(parseObject?.parseObject?.episode_number || '') === String(failedEntry?.parseObject?.video_resolution || '').replace('p', ''))) delete parseObject.parseObject.episode_number
+            if (parseObject?.episode && (String(parseObject?.episode || '') === String(failedEntry?.parseObject?.video_resolution || '').replace('p', ''))) delete parseObject.episode
+          }
+          file.media = parseObject
+          setHash(file.infoHash, {
+            fileHash: file.fileHash,
+            mediaId: parseObject.media?.id,
+            episode: parseObject.episode,
+            season: parseObject.season,
+            parseObject: parseObject.parseObject,
+            failed: parseObject.failed
+          })
         }
-        if (failedSeason) {
-          parseObject.season = failedSeason
-          if (parseObject.parseObject) parseObject.parseObject.season_number = failedSeason
-        }
-        if (parseObject?.failed) { // hacky fix to remove the episode number when it failed to resolved, when using the torrent name + file name the resolver has a bias toward detecting the video resolution as the episode number.
-          if (parseObject?.parseObject?.episode_number && (String(parseObject?.parseObject?.episode_number || '') === String(failedEntry?.parseObject?.video_resolution || '').replace('p', ''))) delete parseObject.parseObject.episode_number
-          if (parseObject?.episode && (String(parseObject?.episode || '') === String(failedEntry?.parseObject?.video_resolution || '').replace('p', ''))) delete parseObject.episode
-        }
-        file.media = parseObject
-        setHash(file.infoHash, {
-          fileHash: file.fileHash,
-          mediaId: parseObject.media?.id,
-          episode: parseObject.episode,
-          season: parseObject.season,
-          parseObject: parseObject.parseObject,
-          failed: parseObject.failed
-        })
       })
     }
 

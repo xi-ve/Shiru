@@ -310,9 +310,9 @@ export default new class AnimeResolver {
 
     // Fail if anime_type is ONA or OVA and the matched media isn't that format.
     if (parseObj.anime_type?.length) {
-      const types = parseObj.anime_type ? (Array.isArray(parseObj.anime_type) ? parseObj.anime_type : [parseObj.anime_type]).map(t => String(t).toUpperCase()) : []
-      if (types.includes('ONA') && mediaFormat !== 'ONA') return false
-      if (types.includes('OVA') && mediaFormat !== 'OVA') return false
+      const types = parseObj.anime_type ? (Array.isArray(parseObj.anime_type) ? parseObj.anime_type : [parseObj.anime_type]).map(type => String(type).toUpperCase()) : []
+      if (types.includes('ONA') && media?.format !== 'ONA') return false
+      if (types.includes('OVA') && media?.format !== 'OVA') return false
     }
 
     // Prepare title variations for matching
