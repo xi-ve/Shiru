@@ -356,7 +356,7 @@
       } catch (e) { console.error(e) }
       failedToResolve.forEach((file) => {
         const parseObject = resolvedByName.find(({ parseObject }) => AnimeResolver.cleanFileName(`${torrentName} ${file.name}`).includes(parseObject.file_name))
-        if (parseObject?.length) {
+        if (Object.keys(parseObject ?? {}).length) {
           const failedEntry = resolved.find(result => AnimeResolver.cleanFileName(result.parseObject.file_name) === AnimeResolver.cleanFileName(file.name))
           const animeType = failedEntry?.parseObject?.anime_type
           if (animeType) parseObject.parseObject.anime_type = animeType
@@ -392,7 +392,7 @@
         resolved = await AnimeResolver.findAndCacheTitle(AnimeResolver.cleanFileName(videoFiles.map(file => file.name)), false)
         failedToResolve.forEach((file) => {
             const parseObject = resolved.find((parseObject) => AnimeResolver.cleanFileName(file.name).includes(parseObject?.file_name))
-            if (parseObject) file.media = { parseObject: { ...parseObject, failed: true } }
+            if (parseObject) file.media = { parseObject: { ...parseObject }, ...(parseObject?.episode_number ? { episode: parseObject?.episode_number ? Number(parseObject.episode_number) : 1 } : {}), ...(parseObject?.anime_season ? { season: parseObject?.anime_season ? Number(parseObject.anime_season) : 1 } : {}), failed: true }
         })
     }
     videoFiles?.sort((a, b) => a.media?.media?.id - b.media?.media?.id) // group media ids together for easier readability.
