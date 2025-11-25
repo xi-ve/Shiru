@@ -852,13 +852,16 @@ export async function isSubbedProgress(media) {
   if (!media) return true
   if (media.status === 'NOT_YET_RELEASED') return false
   await Helper.getClient().userLists.value
-  const progress = (media.mediaListEntry?.progress ?? media.my_list_status?.num_episodes_watched ?? 0)
+  const progress = media.mediaListEntry?.progress ?? media.my_list_status?.num_episodes_watched ?? 0
   if (progress === 0) return false
   const dubbedEpisodes = (await animeSchedule.dubAiringLists.value)?.find(entry => entry?.media?.media?.id === media.id || entry?.media?.media?.idMal === media.idMal)?.media?.media?.airingSchedule?.nodes
-  if (!dubbedEpisodes?.length) return true
+  if (!dubbedEpisodes?.length) {
+    const airedEntries = (await animeSchedule.dubAiredLists.value)?.filter(entry => entry.id === media.id || entry.idMal === media.idMal)
+    if (!airedEntries?.length) return true
+    return progress > Math.max(...airedEntries.map(entry => entry.episode?.aired ?? 0))
+  }
   const last = dubbedEpisodes[dubbedEpisodes.length > 1 ? dubbedEpisodes.length - 1 : 0]
-  const aired = new Date(last?.airingAt) <= new Date()
-  return progress > (last?.episode - (aired ? 0 : 1))
+  return progress > (last?.episode - ((new Date(last?.airingAt) <= new Date()) ? 0 : 1))
 }
 
 const concurrentRequests = new Map()
