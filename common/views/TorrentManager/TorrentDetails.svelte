@@ -28,9 +28,10 @@
     return 'Seeder'
   }
 
-  let resolved = getResolvedId(infoHash)
-  $: if (current) resolved = getResolvedId(data.infoHash)
-  window.addEventListener('fileEdit', () => getResolvedId(infoHash))
+  let resolved
+  $: resolvedInfo = data.infoHash
+  $: resolved = getResolvedId(resolvedInfo)
+  window.addEventListener('fileEdit', () => getResolvedId(data.infoHash))
   function getResolvedId(infoHash) {
     return getId(infoHash, { client: true }, true)
   }
