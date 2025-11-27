@@ -72,6 +72,7 @@ Want to contribute code? Great! Here's how:
 
 - **PNPM** (or any package manager)
 - **Node.js 22.20.0**
+- **Visual Studio 2022** (if on Windows)
 - **Docker** (with WSL if on Windows)
 - **ADB & Android Studio** (SDK 34) - for Android development
 - **Java 21 (JDK)** - for Android development
