@@ -235,7 +235,7 @@ export function dedupe (entries) {
   /** @type {Record<string, Result>} */
   const deduped = {}
   for (const entry of entries) {
-    if (deduped[entry.hash]) {
+    if (deduped[entry.hash] && !deduped[entry.hash]?.source?.managed) {
       const dupe = deduped[entry.hash]
       dupe.title = AnimeResolver.cleanFileName(entry.title)
       dupe.link = entry.link

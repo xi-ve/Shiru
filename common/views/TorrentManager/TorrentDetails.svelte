@@ -11,6 +11,7 @@
   import { mediaCache } from '@/modules/cache.js'
   import { anilistClient } from '@/modules/anilist.js'
   import AnimeResolver from '@/modules/anime/animeresolver.js'
+  import { copyToClipboard } from '@/modules/clipboard.js'
   import { getId } from '@/modules/anime/animehash.js'
   export let data
   export let current = false
@@ -115,6 +116,9 @@
       </div>
       <div role='button' class='pointer d-none align-items-center justify-content-center font-size-16 rounded option details py-5 px-10' class:d-flex={resolvedId && $mediaCache[resolvedId]} aria-label='View Media' title='View Media' use:click={() => { viewMedia(); toggleDropdown() }}>
         View Media
+      </div>
+      <div role='button' class='pointer d-none align-items-center justify-content-center font-size-16 rounded option details py-5 px-10' class:d-flex={data.magnetURI} aria-label='Copy Magnet Link' title='Copy Magnet Link' use:click={() => { copyToClipboard(data.magnetURI, 'magnet URL'); toggleDropdown() }}>
+        Copy Magnet
       </div>
       <div role='button' class='pointer d-none align-items-center justify-content-center font-size-16 rounded option details py-5 px-10' class:d-flex={!completed && !current && data.progress === 1 && settings.value.torrentPersist} aria-label='Stop Seeding' title='Stop Seeding' use:click={() => { complete(infoHash); toggleDropdown() }}>
         Stop Seeding

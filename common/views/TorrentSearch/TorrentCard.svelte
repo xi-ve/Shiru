@@ -6,7 +6,7 @@
   import { getEpisodeMetadataForMedia, getKitsuMappings } from '@/modules/anime/anime.js'
   import { copyToClipboard } from '@/modules/clipboard.js'
   import { malDubs } from '@/modules/anime/animedubs.js'
-  import { Database, BadgeCheck, FileQuestion } from 'lucide-svelte'
+  import { Database, BadgeCheck, HardDrive, FileQuestion } from 'lucide-svelte'
 
   const { reactive, init } = createListener(['torrent-button', 'torrent-safe-area'])
   init(true)
@@ -248,6 +248,8 @@
       <div class='d-flex' class:ml-auto={result.type !== 'batch'} >
         {#if result.source.icon}
           <img class='wh-25' src={(!result.source.icon.startsWith('http') ? 'data:image/png;base64,' : '') + result.source.icon} alt={result.source.name} title={result.source.name}>
+        {:else if result.source.managed}
+          <HardDrive size='2.5rem'/>
         {:else}
           <FileQuestion size='2.5rem' />
         {/if}
@@ -264,8 +266,10 @@
       <div class='primary-metadata py-5 d-flex flex-row'>
         <div class='text-light d-flex align-items-center text-nowrap'>{fastPrettyBytes(result.size)}</div>
         <div class='text-light d-flex align-items-center text-nowrap'>&nbsp;•&nbsp;</div>
-        <div class='text-light d-flex align-items-center text-nowrap'>{result.seeders} Seeders</div>
-        <div class='text-light d-flex align-items-center text-nowrap'>&nbsp;•&nbsp;</div>
+        {#if !result.source.managed || !result.source.name.match(/completed/i)}
+          <div class='text-light d-flex align-items-center text-nowrap'>{result.seeders} Seeders</div>
+          <div class='text-light d-flex align-items-center text-nowrap'>&nbsp;•&nbsp;</div>
+        {/if}
         <div class='text-light d-flex align-items-center text-nowrap'>{since(new Date(result.date))}</div>
       </div>
       <div class='secondary-metadata d-flex flex-wrap ml-auto justify-content-end'>

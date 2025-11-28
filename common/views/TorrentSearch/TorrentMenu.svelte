@@ -7,8 +7,11 @@
   import { animeSchedule } from '@/modules/anime/animeschedule.js'
   import { cache, caches } from '@/modules/cache.js'
   import { status } from '@/modules/networking.js'
-  import { getMediaMaxEp, getKitsuMappings, getEpisodeMetadataForMedia } from '@/modules/anime/anime.js'
+  import { anitomyscript, getMediaMaxEp, getKitsuMappings, getEpisodeMetadataForMedia } from '@/modules/anime/anime.js'
+  import { loadedTorrent, completedTorrents, seedingTorrents, stagingTorrents } from '@/modules/torrent/torrent.js'
   import { dedupe, getResultsFromExtensions } from '@/modules/extensions/handler.js'
+  import { getId, getHash } from '@/modules/anime/animehash.js'
+  import AnimeResolver from '@/modules/anime/animeresolver.js'
   import { anilistClient } from '@/modules/anilist.js'
   import { click } from '@/modules/click.js'
   import { X, Search, EllipsisVertical, Timer, Clapperboard, MonitorCog, ArrowDownWideNarrow, ChevronLeft, ChevronUp, ChevronDown } from 'lucide-svelte'
@@ -88,7 +91,7 @@
       return result
     })
     return {
-      results: deduped.filter(entry => entry.seeders > 0).sort((a, b) => {
+      results: deduped.filter(entry => entry.seeders > 0 || entry.source?.managed).sort((a, b) => {
         switch (sort) {
           case 'smallest': return a.size - b.size
           case 'best': return (b.type === 'best') - (a.type === 'best') || (b.type === 'alt') - (a.type === 'alt')
@@ -99,7 +102,7 @@
           default: return b.seeders - a.seeders
         }
       }),
-      hiddenResults: deduped.filter(entry => entry.seeders === 0)
+      hiddenResults: deduped.filter(entry => !entry.seeders && !entry.source?.managed)
     }
   }
 
@@ -182,8 +185,51 @@
     return ''
   }
 
+  async function addCachedHashes(cachedHashes) {
+    if (!cachedHashes?.length) return
+    const cachedTorrents = []
+    const torrents = [...completedTorrents.value, ...seedingTorrents.value, ...stagingTorrents.value, loadedTorrent.value].filter(Boolean)
+    for (const cached of cachedHashes) {
+      const torrent = torrents.find(torrent => torrent.infoHash === cached.hash)
+      if (!torrent) continue
+      const title = AnimeResolver.cleanFileName(torrent.name)
+      let searchEpisode = search?.episode
+      let isLocked = cached.locked ?? (cached.files?.length === 1 && (cached.files[0].locked || cached.files[0].parseObject?.locked)) ?? false
+      if (!isLocked && Array.isArray(cached.files) && searchEpisode != null) {
+        const normalizedEpisode = Number.isFinite(Number(searchEpisode)) ? Number(searchEpisode) : searchEpisode
+        const matchingFile = cached.files.find(file => file.episode === normalizedEpisode)
+        if (matchingFile) isLocked = matchingFile.locked ?? false
+      }
+      cachedTorrents.push({
+        title,
+        link: torrent.magnetURI,
+        seeders: torrent.totalSeeders ?? 0,
+        leechers: torrent.totalLeechers ?? 0,
+        hash: torrent.infoHash,
+        size: torrent.size,
+        date: torrent.date,
+        accuracy: isLocked ? 'high' : 'medium',
+        parseObject: (await anitomyscript(title))?.[0],
+        source: { managed: true, name: `Local (${torrent.staging ? 'Staging' : torrent.seeding ? 'Seeding' : torrent.current ? 'Now Playing' : 'Completed'})` }
+      })
+    }
+    if (cachedTorrents.length) results.update(result => ({ ...result, torrents: [...(result?.torrents ?? []), ...cachedTorrents] }))
+  }
+
   async function queryExtensions(request, resolution) {
     $results = {}
+    const cachedHashes = []
+    for (const resolvedHash of getHash(search?.media?.id, { episode: search?.episode, client: true, batchGuess: true }, false, true, true) ?? []) {
+      if (resolvedHash) {
+        const cachedFile = getId(resolvedHash, { fileHash: resolvedHash }, true)
+        if (cachedFile) cachedHashes.push(cachedFile)
+        else {
+          const cachedTorrent = getId(resolvedHash, {}, true)
+          if (cachedTorrent) cachedHashes.push(cachedTorrent)
+        }
+      }
+    }
+    await addCachedHashes(cachedHashes)
     debug(`Querying extensions for torrent sources for ${search?.media?.id}`)
     let promises
     try {
@@ -407,14 +453,14 @@
     {#if best}<TorrentCard type='best' countdown={$settings.rssAutoplay && $results?.resolved ? countdown : -1} result={best} {play} media={search.media} episode={search.episode} />{/if}
     {#if lastMagnet}
       {#each filterResults(lookup, searchText) as result}
-        {#if ((result.link === lastMagnet.link) || (result.hash === lastMagnet.hash)) && result.seeders > 1 && ((best?.link !== lastMagnet.link) && (best?.hash !== lastMagnet.hash)) }
+        {#if ((result.link === lastMagnet.link) || (result.hash === lastMagnet.hash)) && (result.seeders ?? 0) > 1 && ((best?.link !== lastMagnet.link) && (best?.hash !== lastMagnet.hash)) }
           <TorrentCard type='magnet' result={result} {play} media={search.media} episode={search.episode} />
         {/if}
       {/each}
     {/if}
   {/if}
   {#each filterResults(lookup, searchText) as result}
-    {#if ((best?.link !== result.link) && (best?.hash !== result.hash)) && (!lastMagnet || (((result.link !== lastMagnet.link) || (result.hash !== lastMagnet.hash)) || result.seeders <= 1))}
+    {#if ((best?.link !== result.link) && (best?.hash !== result.hash)) && (!lastMagnet || (((result.link !== lastMagnet.link) || (result.hash !== lastMagnet.hash)) || (result.seeders ?? 0) <= 1))}
       <TorrentCard {result} {play} media={search.media} episode={search.episode} />
     {/if}
   {/each}
@@ -425,7 +471,7 @@
     </button>
     {#if viewHidden}
       {#each filterResults(lookupHidden, searchText) as result}
-        {#if ((best?.link !== result.link) && (best?.hash !== result.hash)) && (!lastMagnet || (((result.link !== lastMagnet.link) || (result.hash !== lastMagnet.hash)) || result.seeders <= 1))}
+        {#if (!best || ((best.link !== result.link) && (best.hash !== result.hash))) && (!lastMagnet || (((result.link !== lastMagnet.link) || (result.hash !== lastMagnet.hash)) || (result.seeders ?? 0) <= 1))}
           <div class='unavailable'><TorrentCard {result} {play} media={search.media} episode={search.episode} /></div>
         {/if}
       {/each}

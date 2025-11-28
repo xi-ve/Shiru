@@ -86,6 +86,7 @@ export default class TorrentClient extends WebTorrent {
           infoHash: currentTorrent?.infoHash,
           name: currentTorrent?.name,
           size: currentTorrent?.length,
+          current: currentTorrent.current,
           progress: currentTorrent?.progress,
           numSeeders: currentTorrent?.wires?.filter(wire => wire.isSeeder).length || 0,
           totalSeeders: currentTorrent?.seeders || 0,
@@ -94,6 +95,8 @@ export default class TorrentClient extends WebTorrent {
           numPeers: currentTorrent?.numPeers || 0,
           downloadSpeed: currentTorrent?.downloadSpeed || 0,
           uploadSpeed: currentTorrent?.uploadSpeed || 0,
+          magnetURI: currentTorrent.magnetURI,
+          date: currentTorrent.date ?? new Date(Date.now() - 1_000).toUTCString(),
           eta: currentTorrent?.timeRemaining,
           ratio: currentTorrent?.ratio
         },
@@ -101,6 +104,7 @@ export default class TorrentClient extends WebTorrent {
           infoHash: torrent.infoHash,
           name: torrent.name,
           size: torrent.length,
+          staging: torrent.staging,
           progress: torrent.progress,
           numSeeders: torrent.wires.filter(wire => wire.isSeeder).length || 0,
           totalSeeders: torrent?.seeders || 0,
@@ -109,6 +113,8 @@ export default class TorrentClient extends WebTorrent {
           numPeers: torrent.numPeers,
           downloadSpeed: torrent.downloadSpeed,
           uploadSpeed: torrent.uploadSpeed,
+          magnetURI: torrent.magnetURI,
+          date: torrent.date ?? new Date(Date.now() - 1_000).toUTCString(),
           eta: torrent.timeRemaining,
           ratio: torrent.ratio
         })),
@@ -116,6 +122,7 @@ export default class TorrentClient extends WebTorrent {
           infoHash: torrent.infoHash,
           name: torrent.name,
           size: torrent.length,
+          seeding: torrent.seeding,
           progress: torrent.progress,
           numSeeders: torrent.wires.filter(wire => wire.isSeeder).length || 0,
           totalSeeders: torrent?.seeders || 0,
@@ -124,6 +131,8 @@ export default class TorrentClient extends WebTorrent {
           numPeers: torrent.numPeers,
           downloadSpeed: torrent.downloadSpeed,
           uploadSpeed: torrent.uploadSpeed,
+          magnetURI: torrent.magnetURI,
+          date: torrent.date ?? new Date(Date.now() - 1_000).toUTCString(),
           ratio: torrent.ratio
         }))
       })
@@ -274,6 +283,7 @@ export default class TorrentClient extends WebTorrent {
     })
     torrent.current = current
     torrent.staging = !current
+    torrent.date = new Date(Date.now() - 1_000).toUTCString()
     this.bumpTorrent(torrent)
     const timeout = setTimeout(() => {
       const seeders = torrent?.wires?.filter(wire => wire.isSeeder)?.length
@@ -410,7 +420,7 @@ export default class TorrentClient extends WebTorrent {
     torrent.seeding = false
     if (!this.settings.torrentPersist) await this.torrentCache.delete(torrent.infoHash)
     else {
-      const stats = { infoHash: torrent.infoHash, name: torrent.name, size: torrent.length, progress: torrent.progress, incomplete: torrent.progress < 1 }
+      const stats = { infoHash: torrent.infoHash, name: torrent.name, size: torrent.length, progress: torrent.progress, magnetURI: torrent.magnetURI, date: new Date(Date.now() - 1_000).toUTCString(), incomplete: torrent.progress < 1 }
       this.completed = Array.from(new Map([...(this.completed || []), stats].map(item => [item.infoHash, item])).values())
       this.dispatch('completed', stats)
     }
@@ -455,7 +465,7 @@ export default class TorrentClient extends WebTorrent {
             missingCount++
             const torrentStats = await getProgressAndSize(torrent)
             const verified = await hasIntegrity(torrent, this.torrentPath)
-            const stats = { infoHash: torrent.infoHash, name: torrent.name, size: torrentStats.size, progress: torrentStats.progress, incomplete: torrentStats.progress < 1 || !verified, missing_pieces: !verified }
+            const stats = { infoHash: torrent.infoHash, name: torrent.name, size: torrentStats.size, progress: torrentStats.progress, magnetURI: torrent.magnetURI, date: new Date(Date.now() - 1_000).toUTCString(), incomplete: torrentStats.progress < 1 || !verified, missing_pieces: !verified }
             this.completed = Array.from(new Map([...(this.completed || []), stats].map(item => [item.infoHash, item])).values())
             this.dispatch('completed', stats)
           } else {
@@ -585,7 +595,7 @@ export default class TorrentClient extends WebTorrent {
           if (!this.settings.torrentPersist) await this.torrentCache.delete(data.data)
           else {
             const torrentStats = await getProgressAndSize(cache)
-            const stats = { infoHash: cache.infoHash, name: cache.name, size: torrentStats.size, progress: torrentStats.progress, incomplete: torrentStats.progress < 1 }
+            const stats = { infoHash: cache.infoHash, name: cache.name, size: torrentStats.size, progress: torrentStats.progress, magnetURI: cache.magnetURI, date: new Date(Date.now() - 1_000).toUTCString(), incomplete: torrentStats.progress < 1 }
             this.completed = Array.from(new Map([...(this.completed || []), stats].map(item => [item.infoHash, item])).values())
             this.dispatch('completed', stats)
           }
@@ -622,7 +632,7 @@ export default class TorrentClient extends WebTorrent {
           }
           const torrentStats = await getProgressAndSize(cache)
           const verified = await hasIntegrity(cache, this.torrentPath)
-          return { infoHash: cache.infoHash, name: cache.name, size: torrentStats.size, progress: torrentStats.progress, incomplete: torrentStats.progress < 1 || !verified, missing: !verified }
+          return { infoHash: cache.infoHash, name: cache.name, size: torrentStats.size, progress: torrentStats.progress, magnetURI: cache.magnetURI, date: new Date(Date.now() - 1_000).toUTCString(), incomplete: torrentStats.progress < 1 || !verified, missing: !verified }
         }))
         this.completed = Array.from(new Map([...(this.completed || []), ...(stats.filter(Boolean) || [])].map(item => [item.infoHash, item])).values())
         this.dispatch('completedStats', this.completed.reverse())
@@ -650,7 +660,7 @@ export default class TorrentClient extends WebTorrent {
           const cache = await this.torrentCache.get(data.data?.infoHash || (data.data?.hash && data.data?.torrent) || (await getInfoHash(data.data?.torrent || data.data)))
           if (cache?.infoHash) {
             const torrentStats = await getProgressAndSize(cache)
-            const stats = { infoHash: cache.infoHash, name: cache.name, size: torrentStats.size, progress: torrentStats.progress, incomplete: torrentStats.progress < 1 }
+            const stats = { infoHash: cache.infoHash, name: cache.name, size: torrentStats.size, progress: torrentStats.progress, magnetURI: cache.magnetURI, date: new Date(Date.now() - 1_000).toUTCString(), incomplete: torrentStats.progress < 1 }
             this.completed = Array.from(new Map([...(this.completed || []), stats].map(item => [item.infoHash, item])).values())
             if (data.data?.hash) {
               const unload = this.torrents.find(torrent => torrent.infoHash === data.data.torrent)
