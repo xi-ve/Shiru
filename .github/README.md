@@ -25,7 +25,7 @@ https://github.com/user-attachments/assets/4fa7d60e-ae48-4fb9-9d20-f129f7f907a9
   <a href="https://github.com/RockinChaos/Shiru/releases/latest/"><img alt="Latest Release" src="https://img.shields.io/github/v/release/RockinChaos/Shiru?style=flat-square"></a>
   <a href="https://github.com/RockinChaos/Shiru/commits"><img alt="Last Commit" src="https://img.shields.io/github/last-commit/RockinChaos/Shiru?style=flat-square"></a>
   <a href="https://github.com/RockinChaos/Shiru/stargazers"><img alt="Stargazers" src="https://img.shields.io/github/stars/RockinChaos/Shiru?style=flat-square"></a>
-  <a href="https://github.com/RockinChaos/Shiru/blob/master/LICENSE"><img alt="License: GPLv3" src="https://img.shields.io/github/license/RockinChaos/Shiru?style=flat-square"></a>
+  <a href="../LICENSE"><img alt="License: GPLv3" src="https://img.shields.io/github/license/RockinChaos/Shiru?style=flat-square"></a>
 </p>
 
 ## 📃 **About**
@@ -212,4 +212,4 @@ Credit to [NoCrypt](https://github.com/NoCrypt) for doing the legwork on this.
 
 ## 📜 License
 
-This project follows the [GPLv3 License](https://github.com/RockinChaos/Shiru/blob/master/LICENSE).
+This project follows the [GPLv3 License](../LICENSE).
