@@ -4,7 +4,7 @@
   import WPC from '@/modules/wpc.js'
   import { matchPhrase } from '@/modules/util.js'
   import { settings } from '@/modules/settings.js'
-  import { loadedTorrent, completedTorrents, seedingTorrents, stagingTorrents } from '@/modules/torrent/torrent.js'
+  import { loadedTorrent, completedTorrents, seedingTorrents, stagingTorrents } from '@/modules/torrent.js'
   import ErrorCard from '@/components/cards/ErrorCard.svelte'
   import TorrentDetails from '@/views/TorrentManager/TorrentDetails.svelte'
   import { Search, RefreshCw, TriangleAlert, Package, Percent, Activity, Scale, Gauge, CloudDownload, CloudUpload, Sprout, Magnet, Timer } from 'lucide-svelte'

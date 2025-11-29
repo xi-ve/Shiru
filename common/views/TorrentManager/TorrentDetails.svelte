@@ -5,7 +5,7 @@
 </script>
 <script>
   import { fastPrettyBytes } from '@/modules/util.js'
-  import { add, stage, unload, untrack, complete } from '@/modules/torrent/torrent.js'
+  import { add, stage, unload, untrack, complete } from '@/modules/torrent.js'
   import { click } from '@/modules/click.js'
   import { eta, createListener } from '@/modules/util.js'
   import { mediaCache } from '@/modules/cache.js'

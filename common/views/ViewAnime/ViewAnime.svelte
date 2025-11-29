@@ -5,7 +5,7 @@
   import { copyToClipboard } from '@/modules/clipboard.js'
   import { settings } from '@/modules/settings.js'
   import { mediaCache } from '@/modules/cache.js'
-  import { add } from '@/modules/torrent/torrent.js'
+  import { add } from '@/modules/torrent.js'
   import { anilistClient } from '@/modules/anilist.js'
   import { click } from '@/modules/click.js'
   import Details from '@/views/ViewAnime/Details.svelte'

@@ -35,7 +35,7 @@
 </script>
 
 <script>
-  import { loadedTorrent, completedTorrents, seedingTorrents, stagingTorrents } from '@/modules/torrent/torrent.js'
+  import { loadedTorrent, completedTorrents, seedingTorrents, stagingTorrents } from '@/modules/torrent.js'
   import { since, monthDay, matchPhrase, capitalize } from '@/modules/util.js'
   import { click } from '@/modules/click.js'
   import { onMount, onDestroy } from 'svelte'

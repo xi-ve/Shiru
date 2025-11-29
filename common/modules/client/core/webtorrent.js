@@ -2,12 +2,12 @@ import WebTorrent from 'webtorrent'
 import Client from 'bittorrent-tracker'
 import HTTPTracker from 'bittorrent-tracker/lib/client/http-tracker.js'
 import { hex2bin, arr2hex, text2arr } from 'uint8-util'
-import { makeHash, getInfoHash, hasIntegrity, getProgressAndSize, stringifyQuery, errorToString, encodeStreamURL, ANNOUNCE, TMP } from './metadata.js'
-import { fontRx, sleep, subRx, videoRx } from '../util.js'
+import { makeHash, getInfoHash, hasIntegrity, getProgressAndSize, stringifyQuery, errorToString, encodeStreamURL, ANNOUNCE, TMP } from '../lib/util.js'
+import { fontRx, sleep, subRx, videoRx } from '../../util.js'
 import { SUPPORTS } from '@/modules/support.js'
 import { spawn } from 'node:child_process'
-import Parser from './parser.js'
-import Cache from './manifest.js'
+import Metadata from '../lib/metadata.js'
+import Cache from '../lib/torrentcache.js'
 import Debug from 'debug'
 const debug = Debug('torrent:worker')
 
@@ -507,8 +507,8 @@ export default class TorrentClient extends WebTorrent {
               })
             })
           }
-          this.parser?.destroy()
-          this.parser = null
+          this.metadata?.destroy?.()
+          this.metadata = null
           found.select()
           if (this.settings.torrentStreamedDownload && (found.length > await this.storageQuota(torrent.path))) this.dispatchError('File Too Big! This File Exceeds The Selected Drive\'s Available Space. Change Download Location In Torrent Settings To A Drive With More Space And Restart The App!')
 
@@ -541,7 +541,7 @@ export default class TorrentClient extends WebTorrent {
           torrent.current = true
           this.bumpTorrent(torrent)
           if (!(data.data.external && (SUPPORTS.isAndroid || this.player))) {
-            this.parser = new Parser(this, found)
+            this.metadata = new Metadata(this, found)
             this.findSubtitleFiles(found)
             this.findFontFiles(found)
           } else this.dispatch('externalReady')
@@ -829,7 +829,7 @@ export default class TorrentClient extends WebTorrent {
   }
 
   /**
-   * Gracefully shuts down the TorrentClient, closing trackers, parser, server, and destroying all torrents.
+   * Gracefully shuts down the TorrentClient, closing trackers, metadata, server, and destroying all torrents.
    * Emits a `destroyed` event via IPC once complete.
    */
   destroy() {
@@ -853,8 +853,8 @@ export default class TorrentClient extends WebTorrent {
       this.playerProcess = null
     }
     this.tracker?.destroy(() => null)
-    this.parser?.destroy()
-    this.server?.close()
+    this.metadata?.destroy?.()
+    this.server?.close?.()
     super.destroy(() => {
       this.ipc?.send('destroyed')
       this.ipc?.emit('destroyed')

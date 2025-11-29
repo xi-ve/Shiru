@@ -1,7 +1,7 @@
 <script context='module'>
     import { Download, CloudUpload, CloudDownload, FolderX, FolderCheck, TvMinimalPlay } from 'lucide-svelte'
     import { settings } from '@/modules/settings.js'
-    import { stage, loadedTorrent, stagingTorrents, seedingTorrents, completedTorrents } from '@/modules/torrent/torrent.js'
+    import { stage, loadedTorrent, stagingTorrents, seedingTorrents, completedTorrents } from '@/modules/torrent.js'
     import { getHash } from '@/modules/anime/animehash.js'
     import { click } from '@/modules/click.js'
 

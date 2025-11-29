@@ -1,6 +1,6 @@
-import Metadata from 'matroska-metadata'
+import _Metadata from 'matroska-metadata'
 import { arr2hex, hex2bin } from 'uint8-util'
-import { fontRx } from '../util.js'
+import { fontRx } from '../../util.js'
 import { SUPPORTS } from '@/modules/support.js'
 import Debug from 'debug'
 const debug = Debug('torrent:parser')
@@ -9,10 +9,10 @@ const debug = Debug('torrent:parser')
  * Parses Matroska/WebM container metadata and streams subtitles and attachments.
  * Automatically destroys itself if no valid tracks are found.
  */
-export default class Parser {
+export default class Metadata {
   /** @type {boolean} */
   parsed = false
-  /** @type {Metadata} */
+  /** @type {_Metadata} */
   metadata = null
   /** @type {import('./webtorrent.js').default|null} */
   client = null
@@ -29,7 +29,7 @@ export default class Parser {
     debug('Initializing parser for file: ' + file?.name)
     this.client = client
     this.file = file
-    this.metadata = new Metadata(file)
+    this.metadata = new _Metadata(file)
 
     /**  Extract track information (video, audio, subtitle tracks) */
     this.metadata.getTracks().then(tracks => {
