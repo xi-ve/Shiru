@@ -85,22 +85,22 @@
       <Download size={btnSize} class='flex-shrink-0 p-5 m-5 rounded' strokeWidth='2.5' color={active ? 'currentColor' : 'var(--gray-color-very-dim)'} />
     </SidebarLink>
     {#if $settings.donate && !SUPPORTS.isAndroid}
-      <SidebarLink click={() => { IPC.emit('open', 'https://github.com/sponsors/RockinChaos/') }} icon='favorite' text='Support This App' css='mt-md-h-auto d-sm-h-none' {page} let:active>
-        <Heart size={btnSize} class='flex-shrink-0 p-5 m-5 rounded donate' strokeWidth='2.5' fill='currentColor' />
+      <SidebarLink click={() => { IPC.emit('open', 'https://github.com/sponsors/RockinChaos/') }} icon='favorite' text='Support This App' css='mt-md-h-auto d-sm-h-none' {page} let:active let:hovering>
+        <Heart size={btnSize} class='flex-shrink-0 p-5 m-5 rounded fill-1 donate' strokeWidth='2.5' fill='currentColor' style='--fill-button-color: {hovering ? `var(--gray-color-very-dim)` : `var(--quattuordenary-color)`}' />
       </SidebarLink>
     {/if}
     {#if $updateState === 'downloading'}
-      <SidebarLink click={() => { toast('Update is downloading...', { description: 'This may take a moment, the update will be ready shortly.' }) }} icon='download' text='Update Downloading...' css='{!$settings.donate && !SUPPORTS.isAndroid ? `mt-md-h-auto` : ``} d-sm-h-none' {page} let:active>
-        <CloudDownload size={btnSize} class='flex-shrink-0 p-5 m-5 rounded' strokeWidth='2.5' color='var(--tertiary-color-light)' />
+      <SidebarLink click={() => { toast('Update is downloading...', { description: 'This may take a moment, the update will be ready shortly.' }) }} icon='download' text='Update Downloading...' css='{!$settings.donate && !SUPPORTS.isAndroid ? `mt-md-h-auto` : ``} d-sm-h-none' {page} let:active let:hovering>
+        <CloudDownload size={btnSize} class='flex-shrink-0 p-5 m-5 rounded fill-1' strokeWidth='2.5' color='currentColor' style='--fill-button-color: {hovering ? `var(--gray-color-very-dim)` : `var(--tertiary-color-light)`}' />
       </SidebarLink>
     {:else if $updateState === 'ready' || $updateState === 'ignored'}
-      <SidebarLink click={() => { $updateState = 'ready' }} icon='download' text='Update Available!' css='{!$settings.donate && !SUPPORTS.isAndroid ? `mt-md-h-auto` : ``} d-sm-h-none' {page} let:active>
-        <CloudDownload size={btnSize} class='flex-shrink-0 p-5 m-5 rounded update' strokeWidth='2.5' color='currentColor' />
+      <SidebarLink click={() => { $updateState = 'ready' }} icon='download' text='Update Available!' css='{!$settings.donate && !SUPPORTS.isAndroid ? `mt-md-h-auto` : ``} d-sm-h-none' {page} let:active let:hovering>
+        <CloudDownload size={btnSize} class='flex-shrink-0 p-5 m-5 rounded fill-1' strokeWidth='2.5' color='currentColor' style='--fill-button-color: {hovering ? `var(--gray-color-very-dim)` : `var(--success-color-light)`}' />
       </SidebarLink>
     {/if}
-    <SidebarLink click={() => { $notifyView = !$notifyView }} icon='bell' text='Notifications' css='{!$settings.donate && $updateState !== `downloading` && $updateState !== `ready` && $updateState !== `ignored` && !SUPPORTS.isAndroid ? `mt-md-h-auto` : ``}' {page} overlay={!$actionPrompt && $notifyView && 'notify'} nowPlaying={$view} let:active>
+    <SidebarLink click={() => { $notifyView = !$notifyView }} icon='bell' text='Notifications' css='{!$settings.donate && $updateState !== `downloading` && $updateState !== `ready` && $updateState !== `ignored` && !SUPPORTS.isAndroid ? `mt-md-h-auto` : ``}' {page} overlay={!$actionPrompt && $notifyView && 'notify'} nowPlaying={$view} let:active let:hovering>
       {#if $hasUnreadNotifications && $hasUnreadNotifications > 0}
-        <BellDot size={btnSize} class='flex-shrink-0 p-5 m-5 rounded notify {$notifyView ? `` : `notify-color`}' strokeWidth='2.5' color='currentColor' />
+        <BellDot size={btnSize} class='flex-shrink-0 p-5 m-5 rounded fill-1 notify' strokeWidth='2.5' color='currentColor' style='--fill-button-color: {hovering ? `var(--gray-color-very-dim)` : `var(--notify-color)`}' />
       {:else}
         <Bell size={btnSize} class='flex-shrink-0 p-5 m-5 rounded' strokeWidth='2.5' color={active ? 'currentColor' : 'var(--gray-color-very-dim)'} />
       {/if}
@@ -125,58 +125,10 @@
     animation: purple_glow 1s ease-in-out infinite alternate, bell_shake 10s infinite;
     will-change: drop-shadow;
   }
-  :global(.update) {
-    color: var(--success-color-light);
-    font-variation-settings: 'FILL' 1;
+  .sidebar :global(.fill-1) {
+    color: var(--fill-button-color);
+    text-shadow: 0 0 1rem var(--fill-button-color);
   }
-  .sidebar :global(.donate):hover {
-    color: var(--quattuordenary-color) !important;
-  }
-  .sidebar :global(.donate) {
-    font-variation-settings: 'FILL' 1;
-    color: var(--quattuordenary-color);
-    text-shadow: 0 0 1rem var(--quattuordenary-color);
-  }
-  @keyframes pink_glow {
-    from {
-      filter: drop-shadow(0 0 1rem var(--quattuordenary-color));
-    }
-    to {
-      filter: drop-shadow(0 0 0.5rem var(--quattuordenary-color));
-    }
-  }
-  .sidebar :global(.notify):hover {
-    color: var(--dark-color) !important;
-  }
-  .sidebar :global(.notify-color) {
-    color: var(--notify-color);
-  }
-  @keyframes purple_glow {
-    from {
-      filter: drop-shadow(0 0 2rem var(--notify-color));
-    }
-    to {
-      filter: drop-shadow(0 0 0.2rem var(--notify-color));
-    }
-  }
-  @keyframes bell_shake {
-    0%, 7.5% {
-      transform: rotate(0deg);
-    }
-    1.5% {
-      transform: rotate(-15deg);
-    }
-    3% {
-      transform: rotate(15deg);
-    }
-    4.5% {
-      transform: rotate(-10deg);
-    }
-    6% {
-      transform: rotate(10deg);
-    }
-  }
-
   .sidebar {
     background: none !important;
     overflow-y: unset;
