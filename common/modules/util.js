@@ -542,6 +542,7 @@ export function createListener(triggerClasses = []) {
 
 export const defaults = {
   volume: 1,
+  uiScale: 1,
   presetTheme: 'default-dark',
   playerAutoplay: true,
   playerPause: true,
