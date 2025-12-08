@@ -180,7 +180,7 @@ class RSSMediaManager {
     const processedItems = items.map(item => {
       if (item.hash) {
         const idData = getId(item.hash, {})
-        if (idData) {
+        if (idData && idData.files?.length) {
           return {
             fromId: true,
             original: item,
