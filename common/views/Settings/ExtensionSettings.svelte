@@ -143,7 +143,7 @@
           </div>
         </div>
         {:else}
-        {#each Object.values(settings.sourcesNew) as extension}
+        {#each Object.values(settings.sourcesNew).sort((a, b) => (settings.extensionsNew[(b?.locale || (b?.update + '/')) + b?.id]?.enabled ? 1 : 0) - (settings.extensionsNew[(a?.locale || (a?.update + '/')) + a?.id]?.enabled ? 1 : 0)) as extension}
           {#if !extension?.nsfw || (settings.adult !== 'none')}
             {@const key = (extension?.locale || (extension?.update + '/')) + extension?.id}
             {@const isActive = extensionManager.isActive(key)}

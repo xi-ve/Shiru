@@ -136,7 +136,7 @@ class ExtensionManager {
 
   /**
    * Checks if the keyed extension source exists in the active workers.
-   * @param {string} key - The identifier for the extension worker.
+   * @param {string} key The identifier for the extension worker.
    * @returns {import('comlink').Remote<import('@/modules/extensions/worker.js').Worker>} The active worker instance, or undefined if not found.
    */
   isActive(key) {
@@ -145,7 +145,7 @@ class ExtensionManager {
 
   /**
    * Checks if the keyed extension source exists in the inactive workers.
-   * @param {string} key - The identifier for the extension worker.
+   * @param {string} key The identifier for the extension worker.
    * @returns {import('comlink').Remote<import('@/modules/extensions/worker.js').Worker>} The inactive worker instance, or undefined if not found.
    */
   isInactive(key) {
@@ -154,19 +154,19 @@ class ExtensionManager {
 
   /**
    * Validates and activates an inactive extension worker by key.
-   * @param {string} key - The identifier for the extension worker to validate.
+   * @param {string} key The identifier for the extension worker to validate.
    * @returns {Promise<void>}
    */
   async validateExtension(key) {
     const inactiveWorker = this.inactiveWorkers[key]
     if (!inactiveWorker) return
     try {
+      delete this.inactiveWorkers[key]
       if (!(await inactiveWorker.validate())) throw new Error('The content source appears to be unreachable.')
       this.activeWorkers[key] = inactiveWorker
-      delete this.inactiveWorkers[key]
       settings.set(settings.value)
     } catch (error) {
-      if (!this.inactiveWorkers[key]) inactiveWorker.terminate()
+      if (!this.activeWorkers[key]) this.inactiveWorkers[key] = inactiveWorker
       await printError(`Failed to load extension ${key}`, 'Validation has failed', error)
     }
   }
@@ -258,7 +258,7 @@ class ExtensionManager {
 
   /**
    * Gets a promise that resolves when a specific extension is ready (or rejects if it fails)
-   * @param {string} key - The extension key
+   * @param {string} key The extension key
    * @returns {Promise<import('comlink').Remote<import('@/modules/extensions/worker.js').Worker>|null>}
    */
   async whenExtensionReady(key) {
@@ -365,7 +365,7 @@ class ExtensionManager {
   /**
    * Updates the extension source repository if it has changed.
    *
-   * @param {string} url - The URL of the source repository.
+   * @param {string} url The URL of the source repository.
    * @returns {Promise<boolean>} True if updated, false if unchanged or failed.
    */
   async updateSources(url) {
