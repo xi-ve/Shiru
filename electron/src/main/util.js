@@ -60,10 +60,13 @@ app.setJumpList?.([
   }
 ])
 
-const defaultBounds = { width: 1600, height: 900, x: undefined, y: undefined }
+let defaultBounds
 export function getWindowState() {
   const state = store.get('windowState') || {}
+  const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize
+  defaultBounds = { width: Math.floor(screenWidth * 0.75), height: Math.floor(screenHeight * 0.75), x: undefined, y: undefined }
   let bounds = state.bounds || defaultBounds
+  if (bounds.width > screenWidth || bounds.height > screenHeight) bounds = { ...defaultBounds }
   if (bounds.x !== undefined && bounds.y !== undefined) {
     const { width, height, x, y } = screen.getDisplayNearestPoint({ x: bounds.x, y: bounds.y }).bounds
     if (bounds.x < x || bounds.y < y || bounds.x > x + width || bounds.y > y + height) {
@@ -72,7 +75,6 @@ export function getWindowState() {
     }
   }
   if (bounds.x === undefined || bounds.y === undefined) {
-    const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize
     bounds.x = Math.floor((screenWidth - bounds.width) / 2)
     bounds.y = Math.floor((screenHeight - bounds.height) / 2)
   }

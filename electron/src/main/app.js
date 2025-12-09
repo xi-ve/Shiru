@@ -357,7 +357,7 @@ export default class App {
     if (!this.ready && !ready) return
     if (!this.ready) this.ready = true
     if (ready) {
-      this.mainWindow.setBounds(this.windowState.bounds)
+      if (this.windowState.bounds.x || this.windowState.bounds.y) this.mainWindow.setBounds(this.windowState.bounds)
       if (this.windowState.isMaximized) this.mainWindow.maximize()
       if (this.windowState.isFullScreen) this.mainWindow.setFullScreen(true)
     }
